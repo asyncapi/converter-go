@@ -1,0 +1,173 @@
+{
+  "info": {
+    "version": "1.0.0",
+    "description": "The Smartylighting Streetlights API allows you to remotely manage the city lights.\n\n### Check out its awesome features:\n\n* Turn a specific streetlight on/off \ud83c\udf03\n* Dim a specific streetlight \ud83d\ude0e\n* Receive real-time information about environmental lighting conditions \ud83d\udcc8\n",
+    "license": {
+      "url": "https://www.apache.org/licenses/LICENSE-2.0",
+      "name": "Apache 2.0"
+    },
+    "title": "Streetlights API"
+  },
+  "channels": {
+    "smartylighting/streetlights/1/0/action/{streetlightId}/turn/off": {
+      "subscribe": {
+        "message": {
+          "$ref": "#/components/messages/turnOnOff"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/streetlightId"
+        }
+      ]
+    },
+    "smartylighting/streetlights/1/0/action/{streetlightId}/dim": {
+      "subscribe": {
+        "message": {
+          "$ref": "#/components/messages/dimLight"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/streetlightId"
+        }
+      ]
+    },
+    "smartylighting/streetlights/1/0/action/{streetlightId}/turn/on": {
+      "subscribe": {
+        "message": {
+          "$ref": "#/components/messages/turnOnOff"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/streetlightId"
+        }
+      ]
+    },
+    "smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/streetlightId"
+        }
+      ],
+      "publish": {
+        "message": {
+          "$ref": "#/components/messages/lightMeasured"
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "description": "Provide your API key as the user and leave the password empty.",
+        "in": "user"
+      }
+    },
+    "messages": {
+      "turnOnOff": {
+        "payload": {
+          "$ref": "#/components/schemas/turnOnOffPayload"
+        },
+        "summary": "Command a particular streetlight to turn the lights on or off."
+      },
+      "lightMeasured": {
+        "payload": {
+          "$ref": "#/components/schemas/lightMeasuredPayload"
+        },
+        "summary": "Inform about environmental lighting conditions for a particular streetlight."
+      },
+      "dimLight": {
+        "payload": {
+          "$ref": "#/components/schemas/dimLightPayload"
+        },
+        "summary": "Command a particular streetlight to dim the lights."
+      }
+    },
+    "parameters": {
+      "streetlightId": {
+        "description": "The ID of the streetlight.",
+        "name": "streetlightId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "dimLightPayload": {
+        "type": "object",
+        "properties": {
+          "percentage": {
+            "minimum": 0,
+            "type": "integer",
+            "description": "Percentage to which the light should be dimmed to.",
+            "maximum": 100
+          },
+          "sentAt": {
+            "$ref": "#/components/schemas/sentAt"
+          }
+        }
+      },
+      "turnOnOffPayload": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "enum": [
+              "on",
+              "off"
+            ],
+            "type": "string",
+            "description": "Whether to turn on or off the light."
+          },
+          "sentAt": {
+            "$ref": "#/components/schemas/sentAt"
+          }
+        }
+      },
+      "lightMeasuredPayload": {
+        "type": "object",
+        "properties": {
+          "lumens": {
+            "minimum": 0,
+            "type": "integer",
+            "description": "Light intensity measured in lumens."
+          },
+          "sentAt": {
+            "$ref": "#/components/schemas/sentAt"
+          }
+        }
+      },
+      "sentAt": {
+        "type": "string",
+        "description": "Date and time when the message was sent.",
+        "format": "date-time"
+      }
+    }
+  },
+  "asyncapi": "2.0.0-rc1",
+  "id": "urn:streetlights.api",
+  "servers": [
+    {
+      "url": "api.streetlights.smartylighting.com:{port}",
+      "variables": {
+        "port": {
+          "default": "1883",
+          "enum": [
+            "1883",
+            "8883"
+          ],
+          "description": "Secure connection (TLS) is available through port 8883."
+        }
+      },
+      "protocol": "mqtt",
+      "security": [
+        {
+          "apiKey": []
+        }
+      ],
+      "description": "Test broker"
+    }
+  ]
+}
