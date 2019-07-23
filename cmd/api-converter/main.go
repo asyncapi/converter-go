@@ -57,7 +57,7 @@ func (h helper) encodeFormat() (asyncapi.Format, error) {
 }
 
 func (h helper) reader() (io.Reader, error) {
-	fileOption := h.Opts["<path>"]
+	fileOption := h.Opts["<PATH>"]
 	path := fmt.Sprintf("%v", fileOption)
 	if _, err := url.ParseRequestURI(path); err == nil {
 		resp, err := http.Get(path)
@@ -90,15 +90,19 @@ func (h helper) newConverterAndReader() (asyncapi.Converter, io.Reader, error) {
 }
 
 func main() {
-	usage := `asyncapi-converter
+	usage := fmt.Sprintf(`
+  Convert AsyncAPI documents from version 1.x to %s. 
 
-    Usage:
-    asyncapi-converter <path> [--toYAML] [--id=<id>]
+  Usage:
+    asyncapi-converter <PATH> [--toYAML] [--id=<id>]
     asyncapi-converter -h | --help | --version
 
-    Options:
-    --toYAML    produces results in yaml format
-	--id		allows to specify application id`
+  Arguments:
+    PATH        a path to asyncapi document (either url or local file, supports json and yaml format)  	
+
+  Options:
+    --toYAML    produces results in yaml format instead json
+    --id=<id>   allows to specify application id`, v2rc1.AsyncapiVersion)
 
 	opts, err := docopt.ParseArgs(usage, nil, version)
 	if err != nil {

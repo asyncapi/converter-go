@@ -208,6 +208,9 @@ func TestConverter_Do_Invalid(t *testing.T) {
 			inputFilePath: "./testdata/input/invalid/gitter-streaming1.2.0_invalid2.json",
 		},
 		{
+			inputFilePath: "./testdata/input/invalid/gitter-streaming1.2.0_invalid_version.json",
+		},
+		{
 			inputFilePath: "./testdata/input/invalid/streetlights1.0.0_invalid1.json",
 		},
 		{

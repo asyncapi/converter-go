@@ -2,7 +2,8 @@ package v2rc1
 
 import (
 	"asyncapi-converter/pkg/asyncapi"
-	
+	"regexp"
+
 	"github.com/pkg/errors"
 
 	"encoding/json"
@@ -13,7 +14,7 @@ import (
 	"strings"
 )
 
-const asyncapiVersion = "2.0.0-rc1"
+const AsyncapiVersion = "2.0.0-rc1"
 
 type converter struct {
 	id             *string
@@ -27,6 +28,7 @@ func (c *converter) Do(reader io.Reader, writer io.Writer) error {
 		func() error {
 			return c.unmarshal(reader)
 		},
+		c.verifyAsyncapiVersion,
 		c.updateId,
 		c.updateVersion,
 		c.updateServers,
@@ -159,7 +161,7 @@ func (c *converter) updateId() error {
 }
 
 func (c *converter) updateVersion() error {
-	c.data["asyncapi"] = asyncapiVersion
+	c.data["asyncapi"] = AsyncapiVersion
 	return nil
 }
 
@@ -299,4 +301,20 @@ func (c *converter) createChannels() error {
 func extractId(value string) string {
 	title := strings.ToLower(value)
 	return strings.Join(strings.Split(title, " "), ".")
+}
+
+var versionRegexp = regexp.MustCompile("^1\\.[0-2].0$")
+
+func (c *converter) verifyAsyncapiVersion() error {
+	version, ok := c.data["asyncapi"]
+	if !ok {
+		return errors.Wrap(asyncapi.ErrInvalidProperty, "asyncapi")
+	}
+	versionString := fmt.Sprintf("%v", version)
+	switch versionRegexp.Match([]byte(versionString)) {
+	case true:
+		return nil
+	default:
+		return errors.Wrap(asyncapi.ErrUnsupportedAsyncapiVersion, versionString)
+	}
 }

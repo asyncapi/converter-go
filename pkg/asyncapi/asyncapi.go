@@ -24,9 +24,10 @@ type Converter interface {
 type UnmarshalFunc func([]byte, interface{}) error
 
 var (
-	ErrInvalidProperty = errors.New("invalid property")
-	ErrInvalidDocument = errors.New("unable to decode document")
-	JsonEncode         = func(data interface{}, writer io.Writer) error {
+	ErrInvalidProperty            = errors.New("invalid property")
+	ErrInvalidDocument            = errors.New("unable to decode document")
+	ErrUnsupportedAsyncapiVersion = errors.New("unsupported asyncapi version")
+	JsonEncode                    = func(data interface{}, writer io.Writer) error {
 		return json.NewEncoder(writer).Encode(data)
 	}
 	YamlEncode = func(data interface{}, writer io.Writer) error {
