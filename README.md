@@ -52,7 +52,7 @@ minimal example that will convert `gitter-streaming` from version `1.2.0` to `2.
 asyncapi-converter https://git.io/fjMPF --toYAML
 ```
 
-specify the application id example:
+- `gitter-streaming` conversion from version 1.2.0 to 2.0.0-rc1 in the `json` format specifying the application `id`
 
 ```bash
 asyncapi-converter https://git.io/fjMXl --id=urn:com.asynapi.streetlights
