@@ -16,7 +16,7 @@ The AsyncAPI Converter converts AsyncAPI documents from versions 1.0.0, 1.1.0 an
 
 ## Usage
 
-You can use the AsyncAPI Converter in terminal or as a package.
+You can use the AsyncAPI Converter in the terminal or as a package.
 
 ### CLI
 
