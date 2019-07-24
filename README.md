@@ -20,7 +20,7 @@ You can use the AsyncAPI Converter in the terminal or as a package.
 
 ### CLI
 
-To use the AsyncAPI Converter in a terminal, build the application. Run:
+Before you use the AsyncAPI Converter in the terminal, build the application. Run:
 
 ```bash
 git clone https://github.com/asyncapi/converter-go.git
