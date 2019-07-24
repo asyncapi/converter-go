@@ -37,7 +37,7 @@ asyncapi-converter <document_path> [--toYAML] [--id=<id>]
 where:
 
 - `document_path` is a mandatory argument that is either a URL or  a file path to an AsyncAPI document
-- `--toYAML` is an optional argument and allows to produce results in yaml format instead of json
+- `--toYAML` is an optional argument that allows producing results in the `yaml` format instead of `json`
 - `--id` is an optional argument and allows to specify application id
 
 minimal example that will convert `gitter-streaming` from version `1.2.0` to `2.0.0-rc1` in `json` format
