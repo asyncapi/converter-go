@@ -46,7 +46,7 @@ minimal example that will convert `gitter-streaming` from version `1.2.0` to `2.
 asyncapi-converter https://git.io/fjMPF
 ```
 
-minimal example that will convert `gitter-streaming` from version `1.2.0` to `2.0.0-rc1` in `yaml` format
+- `gitter-streaming` conversion from version 1.2.0 to 2.0.0-rc1 in the `yaml` format
 
 ```bash
 asyncapi-converter https://git.io/fjMPF --toYAML
