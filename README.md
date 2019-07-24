@@ -2,7 +2,7 @@
 
 ## Overview
 
-The AsyncAPI Converter converts AsyncAPI documents from version `1.0.0`, `1.1.0` and `1.2.0` to version `2.0.0-rc1`. It supports both `json` and `yaml` formats on input and output. By default the AsyncAPI Converter coverts a document into the `json` format.
+The AsyncAPI Converter converts AsyncAPI documents from versions 1.0.0, 1.1.0 and 1.2.0 to version 2.0.0-rc1. It supports both `json` and `yaml` formats on input and output. By default, the AsyncAPI Converter converts a document into the `json` format.
 
 ## Prerequisites
 
