@@ -36,7 +36,7 @@ asyncapi-converter <document_path> [--toYAML] [--id=<id>]
 
 where:
 
-- `document_path` is a mandatory argument that is either `URL` or `file path` to asyncapi document
+- `document_path` is a mandatory argument that is either a URL or  a file path to an AsyncAPI document
 - `--toYAML` is an optional argument and allows to produce results in yaml format instead of json
 - `--id` is an optional argument and allows to specify application id
 
