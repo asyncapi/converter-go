@@ -33,24 +33,94 @@ func TestIsInvalidPropertyErr(t *testing.T) {
 		expected bool
 	}{
 		{
-			name:     "is ErrInvalidProperty",
-			error:    ErrInvalidProperty,
+			name:     "ErrInvalidProperty",
+			error:    NewErrInvalidProperty("test"),
 			expected: true,
 		},
 		{
-			name:     "is not ErrInvalidProperty",
-			error:    errors.New("error"),
+			name:     "ErrInvalidDocument",
+			error:    ErrInvalidDocument,
 			expected: false,
 		},
 		{
-			name:     "is not ErrInvalidProperty",
+			name:     "ErrUnsupportedAsyncapiVersion",
+			error:    ErrUnsupportedAsyncapiVersion,
 			expected: false,
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actual := IsInvalidPropertyErr(test.error)
-			NewWithT(t).Expect(actual).To(Equal(test.expected))
+			g := NewWithT(t)
+			if actual, ok := test.error.(Error); ok {
+				g.Expect(actual.InvalidProperty()).To(Equal(test.expected))
+				g.Expect(actual.Error()).ToNot(BeEmpty())
+			}
+		})
+	}
+}
+
+func TestIsErrInvalidDocumentErr(t *testing.T) {
+	tests := []struct {
+		name     string
+		error    error
+		expected bool
+	}{
+		{
+			name:     "ErrInvalidDocument",
+			error:    ErrInvalidDocument,
+			expected: true,
+		},
+		{
+			name:     "ErrInvalidProperty",
+			error:    NewErrInvalidProperty("test"),
+			expected: false,
+		},
+		{
+			name:     "ErrUnsupportedAsyncapiVersion",
+			error:    ErrUnsupportedAsyncapiVersion,
+			expected: false,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			g := NewWithT(t)
+			if actual, ok := test.error.(Error); ok {
+				g.Expect(actual.InvalidDocument()).To(Equal(test.expected))
+				g.Expect(actual.Error()).ToNot(BeEmpty())
+			}
+		})
+	}
+}
+
+func TestIsErrUnsupportedAsyncapiVersionErr(t *testing.T) {
+	tests := []struct {
+		name     string
+		error    error
+		expected bool
+	}{
+		{
+			name:     "ErrUnsupportedAsyncapiVersion",
+			error:    ErrUnsupportedAsyncapiVersion,
+			expected: true,
+		},
+		{
+			name:     "ErrInvalidProperty",
+			error:    NewErrInvalidProperty("test"),
+			expected: false,
+		},
+		{
+			name:     "ErrInvalidDocument",
+			error:    ErrInvalidDocument,
+			expected: false,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			g := NewWithT(t)
+			if actual, ok := test.error.(Error); ok {
+				g.Expect(actual.UnsupportedAsyncapiVersion()).To(Equal(test.expected))
+				g.Expect(actual.Error()).ToNot(BeEmpty())
+			}
 		})
 	}
 }

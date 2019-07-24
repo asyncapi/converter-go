@@ -150,11 +150,11 @@ func (c *converter) updateId() error {
 	}
 	info, ok := c.data["info"].(map[string]interface{})
 	if !ok {
-		return errors.Wrap(asyncapi.ErrInvalidProperty, "info")
+		return asyncapi.NewErrInvalidProperty("info")
 	}
 	title, ok := info["title"]
 	if !ok {
-		return errors.Wrap(asyncapi.ErrInvalidProperty, "missing title")
+		return asyncapi.NewErrInvalidProperty("title")
 	}
 	c.data["id"] = fmt.Sprintf(`urn:%s`, extractId(fmt.Sprintf("%v", title)))
 	return nil
@@ -168,13 +168,13 @@ func (c *converter) updateVersion() error {
 func (c *converter) updateServers() error {
 	servers, ok := c.data["servers"].([]interface{})
 	if !ok {
-		return errors.Wrap(asyncapi.ErrInvalidProperty, "servers")
+		return asyncapi.NewErrInvalidProperty("servers")
 	}
 	_, containsSecurity := c.data["security"]
 	for _, item := range servers {
 		server, ok := item.(map[string]interface{})
 		if !ok {
-			return errors.Wrap(asyncapi.ErrInvalidProperty, "server")
+			return asyncapi.NewErrInvalidProperty("server")
 		}
 		server["protocol"] = server["scheme"]
 		delete(server, "scheme")
@@ -193,7 +193,7 @@ func (c *converter) channelsFromTopics() error {
 	channels := make(map[string]interface{})
 	topics, ok := c.data["topics"].(map[string]interface{})
 	if !ok {
-		return errors.Wrap(asyncapi.ErrInvalidProperty, "topics")
+		return asyncapi.NewErrInvalidProperty("topics")
 	}
 	for key, value := range topics {
 		var topic string
@@ -227,7 +227,7 @@ func (c *converter) channelsFromTopics() error {
 func (c *converter) channelsFromStream() error {
 	events, ok := c.data["stream"].(map[string]interface{})
 	if !ok {
-		return errors.Wrap(asyncapi.ErrInvalidProperty, "events")
+		return asyncapi.NewErrInvalidProperty("events")
 	}
 	channel := make(map[string]interface{})
 	if _, ok := events["read"]; ok {
@@ -253,7 +253,7 @@ func (c *converter) channelsFromStream() error {
 func (c *converter) channelsFromEvents() error {
 	stream, ok := c.data["events"].(map[string]interface{})
 	if !ok {
-		return errors.Wrap(asyncapi.ErrInvalidProperty, "stream")
+		return asyncapi.NewErrInvalidProperty("stream")
 	}
 	channel := make(map[string]interface{})
 	if _, ok := stream["receive"]; ok {
@@ -295,7 +295,7 @@ func (c *converter) createChannels() error {
 	if _, ok := c.data["events"]; ok {
 		return c.channelsFromEvents()
 	}
-	return errors.Wrap(asyncapi.ErrInvalidProperty, "missing topics/stream/events")
+	return asyncapi.NewErrInvalidProperty("missing topics/stream/events")
 }
 
 func extractId(value string) string {
@@ -308,7 +308,7 @@ var versionRegexp = regexp.MustCompile("^1\\.[0-2].0$")
 func (c *converter) verifyAsyncapiVersion() error {
 	version, ok := c.data["asyncapi"]
 	if !ok {
-		return errors.Wrap(asyncapi.ErrInvalidProperty, "asyncapi")
+		return asyncapi.NewErrInvalidProperty("asyncapi")
 	}
 	versionString := fmt.Sprintf("%v", version)
 	switch versionRegexp.Match([]byte(versionString)) {

@@ -15,7 +15,7 @@ import (
 	"os"
 )
 
-const version = "asyncapi-converter 0.1.0rc1"
+const version = "asyncapi-converter 0.1.0-rc1"
 
 var (
 	errFileDoesNotExist = errors.New("file does not exist")

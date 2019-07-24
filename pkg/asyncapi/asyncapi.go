@@ -1,7 +1,6 @@
 package asyncapi
 
 import (
-	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 
 	"encoding/json"
@@ -24,10 +23,7 @@ type Converter interface {
 type UnmarshalFunc func([]byte, interface{}) error
 
 var (
-	ErrInvalidProperty            = errors.New("invalid property")
-	ErrInvalidDocument            = errors.New("unable to decode document")
-	ErrUnsupportedAsyncapiVersion = errors.New("unsupported asyncapi version")
-	JsonEncode                    = func(data interface{}, writer io.Writer) error {
+	JsonEncode = func(data interface{}, writer io.Writer) error {
 		return json.NewEncoder(writer).Encode(data)
 	}
 	YamlEncode = func(data interface{}, writer io.Writer) error {
@@ -46,10 +42,6 @@ func BuildUnmarshalWithFallback(primary UnmarshalFunc, fallback ...UnmarshalFunc
 		}
 		return err
 	}
-}
-
-func IsInvalidPropertyErr(e error) bool {
-	return e == ErrInvalidProperty
 }
 
 func EncodeFunction(encodeFormat Format) Encode {
