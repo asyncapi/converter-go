@@ -1,50 +1,61 @@
 # AsyncAPI Converter
 
-Convert AsyncAPI documents from version 1.x to 2.0.0-rc1.
+## Overview
+
+The AsyncAPI Converter converts AsyncAPI documents from version `1.0.0`, `1.1.0` and `1.2.0` to version `2.0.0-rc1`. It supports both `json` and `yaml` formats on input and output. By default the AsyncAPI Converter coverts a document into the `json` format.
+
+## Prerequisites
+
+- `go` in version 1.11+
 
 ## Installation
+
+ To install the AsyncAPI Converter package, run:
 
 `go get github.com/asyncapi/converter-go`
 
 ## Usage
 
-### From CLI
+You can use the AsyncAPI Converter in terminal or as a package.
+
+### CLI
+
+To use the AsyncAPI Converter in a terminal, build the application. Run:
 
 ```bash
-Usage:
-asyncapi-converter <path> [--toYAML] [--id=<id>]
-asyncapi-converter -h | --help | --version
-
-Options:
---toYAML    produces results in yaml format
---id        allows to specify application id
+git clone https://github.com/asyncapi/converter-go.git
+cd ./converter-go
+go build -o=asyncapi-converter ./cmd/api-converter/main.go
 ```
 
-Minimal example:
+To convert a document use the following command:
 
-```bash
-$ asyncapi-converter https://git.io/fjMPF --toYAML
-asyncapi: 2.0.0-rc1
-channels:
-    /:
-        publish:
-            message:
-                oneOf:
-                  - $ref: '#/components/messages/chatMessage'
-...
+```text
+asyncapi-converter <document_path> [--toYAML] [--id=<id>]
 ```
 
-Specify the application id:
+where:
 
-```bash
-$ asyncapi-converter streetlights.yml --id=urn:com.asynapi.streetlights
-{"asyncapi":"2.0.0-rc1","channels":{"/":{"publish":{"message":{"oneOf":[{"$ref":"#/components/messages/chatMessage"}...
-..."id":"urn:com.asynapi.streetlights","info":{"title...
+- `document_path` is a mandatory argument that is either `URL` or `file path` to asyncapi document
+- `--toYAML` is an optional argument and allows to produce results in yaml format instead of json
+- `--id` is an optional argument and allows to specify application id
+
+minimal example that will convert `gitter-streaming` from version `1.2.0` to `2.0.0-rc1` in `json` format
+
+```text
+asyncapi-converter https://git.io/fjMPF
 ```
 
-Save the result in a file:
+minimal example that will convert `gitter-streaming` from version `1.2.0` to `2.0.0-rc1` in `yaml` format
+
 ```bash
-$ asyncapi-converter streetlights.json --toYAML --id=urn:com.asynapi.streetlights > streetlights2.yml
+asyncapi-converter https://git.io/fjMPF --toYAML
+```
+
+specify the application id example:
+
+```bash
+asyncapi-converter https://git.io/fjMXl --id=urn:com.asynapi.streetlights
 ```
 
 ### As a package
