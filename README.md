@@ -40,7 +40,7 @@ where:
 - `--toYAML` is an optional argument that allows producing results in the `yaml` format instead of `json`
 - `--id` is an optional argument that allows specifying the application `id`
 
-minimal example that will convert `gitter-streaming` from version `1.2.0` to `2.0.0-rc1` in `json` format
+- `gitter-streaming` conversion from version 1.2.0 to 2.0.0-rc1 in the `json` format
 
 ```text
 asyncapi-converter https://git.io/fjMPF
