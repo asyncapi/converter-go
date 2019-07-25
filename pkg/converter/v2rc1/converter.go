@@ -295,7 +295,7 @@ func (c *converter) createChannels() error {
 	if _, ok := c.data["events"]; ok {
 		return c.channelsFromEvents()
 	}
-	return asyncapi.NewErrInvalidProperty("missing topics/stream/events")
+	return asyncapi.NewErrInvalidProperty("missing one of topics/stream/events")
 }
 
 func extractId(value string) string {

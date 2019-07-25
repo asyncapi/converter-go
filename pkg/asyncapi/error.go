@@ -36,9 +36,9 @@ func (err asyncapiError) Error() string {
 	case errInvalidProperty:
 		return fmt.Sprintf("asyncapi: error invalid property %v", err.context)
 	case errInvalidDocument:
-		return "unable to decode document"
+		return "asyncapi: unable to decode document"
 	default:
-		return "unsupported asyncapi version"
+		return "asyncapi: unsupported asyncapi version"
 	}
 }
 

@@ -6,7 +6,7 @@ The AsyncAPI Converter converts AsyncAPI documents from versions 1.0.0, 1.1.0 an
 
 ## Prerequisites
 
-- [Golang](https://golang.org/dl/) in version 1.11+
+- [Golang](https://golang.org/dl/) version 1.11+
 
 ## Installation
 
@@ -49,21 +49,21 @@ See the following minimal examples of the AsyncAPI Converter usage in the termin
 
 - `gitter-streaming` conversion from version 1.2.0 to 2.0.0-rc1 in the `json` format
 
-```text
-asyncapi-converter https://git.io/fjMPF
-```
+  ```text
+  asyncapi-converter https://git.io/fjMPF
+  ```
 
 - `gitter-streaming` conversion from version 1.2.0 to 2.0.0-rc1 in the `yaml` format
 
-```bash
-asyncapi-converter https://git.io/fjMPF --toYAML
-```
+  ```bash
+  asyncapi-converter https://git.io/fjMPF --toYAML
+  ```
 
 - `gitter-streaming` conversion from version 1.2.0 to 2.0.0-rc1 in the `json` format specifying the application `id`
 
-```bash
-asyncapi-converter https://git.io/fjMXl --id=urn:com.asynapi.streetlights
-```
+  ```bash
+  asyncapi-converter https://git.io/fjMXl --id=urn:com.asynapi.streetlights
+  ```
 
 ### As a package
 
