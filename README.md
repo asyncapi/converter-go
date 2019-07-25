@@ -67,7 +67,7 @@ See the following minimal examples of the AsyncAPI Converter usage in the termin
 
 ### As a package
 
-You can use AsyncAPI Converter as a package. See the following usage example:
+You can use the AsyncAPI Converter as a package. See the following usage example:
 
 ```go
 package main
