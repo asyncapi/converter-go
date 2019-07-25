@@ -62,15 +62,15 @@ func newConverter(options ...ConverterOption) (asyncapi.Converter, error) {
 }
 
 func NewConverter(options ...ConverterOption) (asyncapi.Converter, error) {
-	return newConverter(append([]ConverterOption{WithFallbackUnmarshal()}, options...)...)
+	return newConverter(append([]ConverterOption{withFallbackUnmarshal()}, options...)...)
 }
 
 func NewJsonConverter(options ...ConverterOption) (asyncapi.Converter, error) {
-	return newConverter(append([]ConverterOption{WithJsonUnmarshal()}, options...)...)
+	return newConverter(append([]ConverterOption{withJsonUnmarshal()}, options...)...)
 }
 
 func NewYamlConverter(options ...ConverterOption) (asyncapi.Converter, error) {
-	return newConverter(append([]ConverterOption{WithYamlUnmarshal()}, options...)...)
+	return newConverter(append([]ConverterOption{withYamlUnmarshal()}, options...)...)
 }
 
 func WithId(id *string) ConverterOption {
@@ -87,7 +87,7 @@ func WithEncoding(encodingFormat asyncapi.Format) ConverterOption {
 	}
 }
 
-func WithFallbackUnmarshal() ConverterOption {
+func withFallbackUnmarshal() ConverterOption {
 	return func(c *converter) error {
 		c.unmarshal = func(reader io.Reader) error {
 			bytes, err := ioutil.ReadAll(reader)
@@ -111,7 +111,7 @@ func WithFallbackUnmarshal() ConverterOption {
 	}
 }
 
-func WithJsonUnmarshal() ConverterOption {
+func withJsonUnmarshal() ConverterOption {
 	return func(c *converter) error {
 		c.unmarshal = func(reader io.Reader) error {
 			return json.NewDecoder(reader).Decode(&c.data)
@@ -120,7 +120,7 @@ func WithJsonUnmarshal() ConverterOption {
 	}
 }
 
-func WithYamlUnmarshal() ConverterOption {
+func withYamlUnmarshal() ConverterOption {
 	return func(c *converter) error {
 		c.unmarshal = func(reader io.Reader) error {
 			bytes, err := ioutil.ReadAll(reader)

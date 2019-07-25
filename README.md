@@ -75,6 +75,7 @@ package main
 import (
 	"asyncapi-converter/pkg/asyncapi"
 	"asyncapi-converter/pkg/converter/v2rc1"
+	
 	"log"
 	"net/http"
 	"os"
@@ -88,23 +89,23 @@ var (
 func main() {
 	// get gitter-streaming.yml
 	resp, err := http.Get(url)
-	handleError(err)
+	if err != nil {
+	    log.Fatal(err)
+    }
 
 	// create yaml converter
 	converter, err := v2rc1.NewYamlConverter(
 		v2rc1.WithEncoding(asyncapi.Json),
 		v2rc1.WithId(&id),
 	)
-	handleError(err)
+	if err != nil {
+        log.Fatal(err)
+    }
 
 	// convert document
 	err = converter.Do(resp.Body, os.Stdout)
-	handleError(err)
-}
-
-func handleError(err error) {
 	if err != nil {
-		log.Fatal(err)
-	}
+        log.Fatal(err)
+    }
 }
 ```
