@@ -1,43 +1,56 @@
-package v2rc1
+package v2
 
 import (
-	"asyncapi-converter/pkg/asyncapi"
-	"regexp"
+	asyncapierr "asyncapi-converter/pkg/error"
 
-	"github.com/pkg/errors"
-
-	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"log"
+	"regexp"
 	"strings"
 )
 
 const AsyncapiVersion = "2.0.0-rc1"
 
+type Decode = func(interface{}, io.Reader) error
+
+type Encode = func(interface{}, io.Writer) error
+
 type converter struct {
-	id             *string
-	encodingFormat asyncapi.Format
-	data           map[string]interface{}
-	unmarshal      func(reader io.Reader) error
+	id     *string
+	data   map[string]interface{}
+	decode Decode
+	encode Encode
 }
 
-func (c *converter) Do(reader io.Reader, writer io.Writer) error {
+func (c *converter) buildEncodeFunction(writer io.Writer) func() error {
+	return func() error {
+		return c.encode(&c.data, writer)
+	}
+}
+
+func (c *converter) buildDecodeFunction(reader io.Reader) func() error {
+	return func() error {
+		var data interface{}
+		decode := c.decode(&data, reader)
+		var ok bool
+		c.data, ok = data.(map[string]interface{})
+		if !ok {
+			return asyncapierr.NewInvalidDocumentError()
+		}
+		return decode
+	}
+}
+
+func (c *converter) Convert(reader io.Reader, writer io.Writer) error {
 	steps := []func() error{
-		func() error {
-			return c.unmarshal(reader)
-		},
+		c.buildDecodeFunction(reader),
 		c.verifyAsyncapiVersion,
 		c.updateId,
 		c.updateVersion,
 		c.updateServers,
 		c.createChannels,
 		c.cleanup,
-		func() error {
-			encode := asyncapi.EncodeFunction(c.encodingFormat)
-			return encode(c.data, writer)
-		},
+		c.buildEncodeFunction(writer),
 	}
 	for _, step := range steps {
 		err := step()
@@ -48,97 +61,24 @@ func (c *converter) Do(reader io.Reader, writer io.Writer) error {
 	return nil
 }
 
-type ConverterOption = func(*converter) error
+type ConverterOption func(*converter) error
 
-func newConverter(options ...ConverterOption) (asyncapi.Converter, error) {
-	converter := converter{}
-	for _, f := range options {
-		err := f(&converter)
-		if err != nil {
+func NewConverter(decode Decode, encode Encode, options ...ConverterOption) (*converter, error) {
+	converter := converter{
+		encode: encode,
+		decode: decode,
+	}
+	for _, option := range options {
+		if err := option(&converter); err != nil {
 			return nil, err
 		}
 	}
 	return &converter, nil
 }
 
-func NewConverter(options ...ConverterOption) (asyncapi.Converter, error) {
-	return newConverter(append([]ConverterOption{withFallbackUnmarshal()}, options...)...)
-}
-
-func NewJsonConverter(options ...ConverterOption) (asyncapi.Converter, error) {
-	return newConverter(append([]ConverterOption{withJsonUnmarshal()}, options...)...)
-}
-
-func NewYamlConverter(options ...ConverterOption) (asyncapi.Converter, error) {
-	return newConverter(append([]ConverterOption{withYamlUnmarshal()}, options...)...)
-}
-
 func WithId(id *string) ConverterOption {
 	return func(converter *converter) error {
 		converter.id = id
-		return nil
-	}
-}
-
-func WithEncoding(encodingFormat asyncapi.Format) ConverterOption {
-	return func(converter *converter) error {
-		converter.encodingFormat = encodingFormat
-		return nil
-	}
-}
-
-func withFallbackUnmarshal() ConverterOption {
-	return func(c *converter) error {
-		c.unmarshal = func(reader io.Reader) error {
-			bytes, err := ioutil.ReadAll(reader)
-			if err != nil {
-				return err
-			}
-			unmarshal := asyncapi.BuildUnmarshalWithFallback(json.Unmarshal, asyncapi.UnmarshalYaml)
-			var data interface{}
-			err = unmarshal(bytes, &data)
-			if err != nil {
-				log.Fatalln(err)
-			}
-			var ok bool
-			c.data, ok = data.(map[string]interface{})
-			if !ok {
-				return asyncapi.ErrInvalidDocument
-			}
-			return nil
-		}
-		return nil
-	}
-}
-
-func withJsonUnmarshal() ConverterOption {
-	return func(c *converter) error {
-		c.unmarshal = func(reader io.Reader) error {
-			return json.NewDecoder(reader).Decode(&c.data)
-		}
-		return nil
-	}
-}
-
-func withYamlUnmarshal() ConverterOption {
-	return func(c *converter) error {
-		c.unmarshal = func(reader io.Reader) error {
-			bytes, err := ioutil.ReadAll(reader)
-			if err != nil {
-				return err
-			}
-			var data interface{}
-			err = asyncapi.UnmarshalYaml(bytes, &data)
-			if err != nil {
-				return err
-			}
-			var ok bool
-			c.data, ok = data.(map[string]interface{})
-			if !ok {
-				return asyncapi.ErrInvalidDocument
-			}
-			return nil
-		}
 		return nil
 	}
 }
@@ -150,11 +90,11 @@ func (c *converter) updateId() error {
 	}
 	info, ok := c.data["info"].(map[string]interface{})
 	if !ok {
-		return asyncapi.NewErrInvalidProperty("info")
+		return asyncapierr.NewInvalidPropertyError("info")
 	}
 	title, ok := info["title"]
 	if !ok {
-		return asyncapi.NewErrInvalidProperty("title")
+		return asyncapierr.NewInvalidPropertyError("title")
 	}
 	c.data["id"] = fmt.Sprintf(`urn:%s`, extractId(fmt.Sprintf("%v", title)))
 	return nil
@@ -168,13 +108,13 @@ func (c *converter) updateVersion() error {
 func (c *converter) updateServers() error {
 	servers, ok := c.data["servers"].([]interface{})
 	if !ok {
-		return asyncapi.NewErrInvalidProperty("servers")
+		return nil
 	}
 	_, containsSecurity := c.data["security"]
 	for _, item := range servers {
 		server, ok := item.(map[string]interface{})
 		if !ok {
-			return asyncapi.NewErrInvalidProperty("server")
+			return asyncapierr.NewInvalidPropertyError("server")
 		}
 		server["protocol"] = server["scheme"]
 		delete(server, "scheme")
@@ -193,7 +133,7 @@ func (c *converter) channelsFromTopics() error {
 	channels := make(map[string]interface{})
 	topics, ok := c.data["topics"].(map[string]interface{})
 	if !ok {
-		return asyncapi.NewErrInvalidProperty("topics")
+		return asyncapierr.NewInvalidPropertyError("topics")
 	}
 	for key, value := range topics {
 		var topic string
@@ -227,7 +167,7 @@ func (c *converter) channelsFromTopics() error {
 func (c *converter) channelsFromStream() error {
 	events, ok := c.data["stream"].(map[string]interface{})
 	if !ok {
-		return asyncapi.NewErrInvalidProperty("events")
+		return asyncapierr.NewInvalidPropertyError("events")
 	}
 	channel := make(map[string]interface{})
 	if _, ok := events["read"]; ok {
@@ -253,7 +193,7 @@ func (c *converter) channelsFromStream() error {
 func (c *converter) channelsFromEvents() error {
 	stream, ok := c.data["events"].(map[string]interface{})
 	if !ok {
-		return asyncapi.NewErrInvalidProperty("stream")
+		return asyncapierr.NewInvalidPropertyError("stream")
 	}
 	channel := make(map[string]interface{})
 	if _, ok := stream["receive"]; ok {
@@ -295,7 +235,7 @@ func (c *converter) createChannels() error {
 	if _, ok := c.data["events"]; ok {
 		return c.channelsFromEvents()
 	}
-	return asyncapi.NewErrInvalidProperty("missing one of topics/stream/events")
+	return asyncapierr.NewInvalidPropertyError("missing one of topics/stream/events")
 }
 
 func extractId(value string) string {
@@ -308,13 +248,13 @@ var versionRegexp = regexp.MustCompile("^1\\.[0-2].0$")
 func (c *converter) verifyAsyncapiVersion() error {
 	version, ok := c.data["asyncapi"]
 	if !ok {
-		return asyncapi.NewErrInvalidProperty("asyncapi")
+		return asyncapierr.NewInvalidPropertyError("asyncapi")
 	}
 	versionString := fmt.Sprintf("%v", version)
 	switch versionRegexp.Match([]byte(versionString)) {
 	case true:
 		return nil
 	default:
-		return errors.Wrap(asyncapi.ErrUnsupportedAsyncapiVersion, versionString)
+		return asyncapierr.NewUnsupportedAsyncapiVersionError(versionString)
 	}
 }

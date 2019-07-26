@@ -1,11 +1,47 @@
-package asyncapi
+package decode
 
 import (
-	"fmt"
 	"gopkg.in/yaml.v3"
+
+	"encoding/json"
+	"fmt"
+	"io"
+	"io/ioutil"
 )
 
-func UnmarshalYaml(in []byte, out interface{}) error {
+type unmarshalFunc func([]byte, interface{}) error
+
+func JsonDecoder(v interface{}, reader io.Reader) error {
+	return json.NewDecoder(reader).Decode(&v)
+}
+
+func YamlDecoder(v interface{}, reader io.Reader) error {
+	data, err := ioutil.ReadAll(reader)
+	if err != nil {
+		return err
+	}
+	err = unmarshalYaml(data, v)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func JsonDecoderWithYamlFallback(out interface{}, reader io.Reader) error {
+	data, err := ioutil.ReadAll(reader)
+	if err != nil {
+		return err
+	}
+	for _, unmarshal := range []unmarshalFunc{json.Unmarshal, unmarshalYaml} {
+		err = unmarshal(data, out)
+		if err == nil {
+			return nil
+		}
+	}
+	return err
+}
+
+func unmarshalYaml(in []byte, out interface{}) error {
 	var result interface{}
 	if err := yaml.Unmarshal(in, &result); err != nil {
 		return err

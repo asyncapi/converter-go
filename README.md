@@ -70,42 +70,5 @@ See the following minimal examples of the AsyncAPI Converter usage in the termin
 You can use the AsyncAPI Converter as a package. See the following usage example:
 
 ```go
-package main
 
-import (
-	"asyncapi-converter/pkg/asyncapi"
-	"asyncapi-converter/pkg/converter/v2rc1"
-	
-	"log"
-	"net/http"
-	"os"
-)
-
-var (
-	url = "https://git.io/fjMPF"
-	id  = "urn:gitter-streaming"
-)
-
-func main() {
-	// get gitter-streaming.yml
-	resp, err := http.Get(url)
-	if err != nil {
-	    log.Fatal(err)
-    }
-
-	// create yaml converter
-	converter, err := v2rc1.NewYamlConverter(
-		v2rc1.WithEncoding(asyncapi.Json),
-		v2rc1.WithId(&id),
-	)
-	if err != nil {
-        log.Fatal(err)
-    }
-
-	// convert document
-	err = converter.Do(resp.Body, os.Stdout)
-	if err != nil {
-        log.Fatal(err)
-    }
-}
 ```

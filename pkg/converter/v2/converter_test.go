@@ -1,8 +1,8 @@
-package v2rc1
+package v2
 
 import (
-	"asyncapi-converter/pkg/asyncapi"
-
+	"asyncapi-converter/pkg/decode"
+	"asyncapi-converter/pkg/encode"
 	. "github.com/onsi/gomega"
 
 	"bytes"
@@ -12,6 +12,10 @@ import (
 	"os"
 	"testing"
 )
+
+type Converter interface {
+	Convert(reader io.Reader, writer io.Writer) error
+}
 
 func TestNewJsonConverter(t *testing.T) {
 	testId := "test"
@@ -23,37 +27,22 @@ func TestNewJsonConverter(t *testing.T) {
 		{
 			inputFilePath:    "./testdata/input/streetlights1.0.0.json",
 			expectedFilePath: "./testdata/output/streetlights.json",
-			options: []ConverterOption{
-				WithEncoding(asyncapi.Json),
-			},
 		},
 		{
 			inputFilePath:    "./testdata/input/streetlights1.1.0.json",
 			expectedFilePath: "./testdata/output/streetlights.json",
-			options: []ConverterOption{
-				WithEncoding(asyncapi.Json),
-			},
 		},
 		{
 			inputFilePath:    "./testdata/input/streetlights1.2.0.json",
 			expectedFilePath: "./testdata/output/streetlights.json",
-			options: []ConverterOption{
-				WithEncoding(asyncapi.Json),
-			},
 		},
 		{
 			inputFilePath:    "./testdata/input/gitter-streaming1.2.0.json",
 			expectedFilePath: "./testdata/output/gitter-streaming.json",
-			options: []ConverterOption{
-				WithEncoding(asyncapi.Json),
-			},
 		},
 		{
 			inputFilePath:    "./testdata/input/gitter-streaming1.2.0_modified_write.json",
 			expectedFilePath: "./testdata/output/gitter-streaming_modified_write.json",
-			options: []ConverterOption{
-				WithEncoding(asyncapi.Json),
-			},
 		},
 		{
 			inputFilePath:    "./testdata/input/gitter-streaming1.2.0_with_id_option.json",
@@ -65,22 +54,16 @@ func TestNewJsonConverter(t *testing.T) {
 		{
 			inputFilePath:    "./testdata/input/slack-rtm1.2.0.json",
 			expectedFilePath: "./testdata/output/slack-rtm.json",
-			options: []ConverterOption{
-				WithEncoding(asyncapi.Json),
-			},
 		},
 		{
 			inputFilePath:    "./testdata/input/streetlights1.0.0_no_base_topic.json",
 			expectedFilePath: "./testdata/output/streetlights_no_base_topic.json",
-			options: []ConverterOption{
-				WithEncoding(asyncapi.Json),
-			},
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewJsonConverter(test.options...)
+			converter, err := NewConverter(decode.JsonDecoder, encode.JsonEncoder, test.options...)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			result := convertFile(converter, test.inputFilePath, g)
 			expected, err := ioutil.ReadFile(test.expectedFilePath)
@@ -139,9 +122,6 @@ func TestNewConverter(t *testing.T) {
 		{
 			inputFilePath:    "./testdata/input/slack-rtm1.2.0.json",
 			expectedFilePath: "./testdata/output/slack-rtm.yml",
-			options: []ConverterOption{
-				WithEncoding(asyncapi.Yaml),
-			},
 		},
 		{
 			inputFilePath:    "./testdata/input/streetlights1.0.0_no_base_topic.json",
@@ -151,7 +131,7 @@ func TestNewConverter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewConverter(test.options...)
+			converter, err := NewConverter(decode.JsonDecoderWithYamlFallback, encode.YamlEncoder, test.options...)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			result := convertFile(converter, test.inputFilePath, g)
 			expected, err := ioutil.ReadFile(test.expectedFilePath)
@@ -187,7 +167,7 @@ func TestNewYamlConverter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewYamlConverter(test.options...)
+			converter, err := NewConverter(decode.JsonDecoderWithYamlFallback, encode.YamlEncoder)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			result := convertFile(converter, test.inputFilePath, g)
 			expected, err := ioutil.ReadFile(test.expectedFilePath)
@@ -211,9 +191,6 @@ func TestConverter_Do_Invalid(t *testing.T) {
 			inputFilePath: "./testdata/input/invalid/gitter-streaming1.2.0_invalid_version.json",
 		},
 		{
-			inputFilePath: "./testdata/input/invalid/streetlights1.0.0_invalid1.json",
-		},
-		{
 			inputFilePath: "./testdata/input/invalid/streetlights1.0.0_invalid2.json",
 		},
 		{
@@ -232,7 +209,7 @@ func TestConverter_Do_Invalid(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewConverter()
+			converter, err := NewConverter(decode.JsonDecoder, encode.JsonEncoder)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			_, err = readDataFromFile(converter, test.inputFilePath, g)
 			g.Expect(err).Should(HaveOccurred())
@@ -248,16 +225,16 @@ func getFileReader(filePath string) (io.Reader, error) {
 	return file, nil
 }
 
-func convertFile(converter asyncapi.Converter, filePath string, g *WithT) string {
+func convertFile(converter Converter, filePath string, g *WithT) string {
 	resultWriter, err := readDataFromFile(converter, filePath, g)
 	g.Expect(err).To(BeNil(), "error while converting input data")
 	return resultWriter.String()
 }
 
-func readDataFromFile(converter asyncapi.Converter, filePath string, g *WithT) (*bytes.Buffer, error) {
+func readDataFromFile(converter Converter, filePath string, g *WithT) (*bytes.Buffer, error) {
 	resultWriter := bytes.NewBufferString("")
 	resultReader, err := getFileReader(filePath)
 	g.Expect(err).To(BeNil(), fmt.Sprintf("error while reading file: %s", filePath))
-	err = converter.Do(resultReader, resultWriter)
+	err = converter.Convert(resultReader, resultWriter)
 	return resultWriter, err
 }
