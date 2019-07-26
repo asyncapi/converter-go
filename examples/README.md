@@ -1,3 +1,5 @@
 # AsyncAPI Converter Examples
 
-This directory contains examples how to use AsyncAPI Converter from development point of view.
+## Overview 
+
+This directory contains examples how to use the AsyncAPI Converter as a package.
