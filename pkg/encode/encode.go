@@ -7,10 +7,10 @@ import (
 	"io"
 )
 
-func JsonEncoder(i interface{}, writer io.Writer) error {
+func ToJson(i interface{}, writer io.Writer) error {
 	return json.NewEncoder(writer).Encode(i)
 }
 
-func YamlEncoder(i interface{}, writer io.Writer) error {
+func ToYaml(i interface{}, writer io.Writer) error {
 	return yaml.NewEncoder(writer).Encode(i)
 }

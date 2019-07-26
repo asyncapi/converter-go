@@ -63,7 +63,7 @@ func TestNewJsonConverter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewConverter(decode.JsonDecoder, encode.JsonEncoder, test.options...)
+			converter, err := NewConverter(decode.FromJson, encode.ToJson, test.options...)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			result := convertFile(converter, test.inputFilePath, g)
 			expected, err := ioutil.ReadFile(test.expectedFilePath)
@@ -131,7 +131,7 @@ func TestNewConverter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewConverter(decode.JsonDecoderWithYamlFallback, encode.YamlEncoder, test.options...)
+			converter, err := NewConverter(decode.FromJsonWithYamlFallback, encode.ToYaml, test.options...)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			result := convertFile(converter, test.inputFilePath, g)
 			expected, err := ioutil.ReadFile(test.expectedFilePath)
@@ -167,7 +167,7 @@ func TestNewYamlConverter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewConverter(decode.JsonDecoderWithYamlFallback, encode.YamlEncoder)
+			converter, err := NewConverter(decode.FromJsonWithYamlFallback, encode.ToYaml)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			result := convertFile(converter, test.inputFilePath, g)
 			expected, err := ioutil.ReadFile(test.expectedFilePath)
@@ -209,7 +209,7 @@ func TestConverter_Do_Invalid(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewConverter(decode.JsonDecoder, encode.JsonEncoder)
+			converter, err := NewConverter(decode.FromJson, encode.ToJson)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			_, err = readDataFromFile(converter, test.inputFilePath, g)
 			g.Expect(err).Should(HaveOccurred())

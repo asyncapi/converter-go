@@ -14,7 +14,7 @@ func main() {
 	reader := strings.NewReader(schema)
 
 	// create json to yaml converter
-	converter, err := v2.NewConverter(decode.JsonDecoder, encode.YamlEncoder)
+	converter, err := v2.NewConverter(decode.FromJson, encode.ToYaml)
 	if err != nil {
 		log.Fatal(err)
 	}
