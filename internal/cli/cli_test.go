@@ -28,6 +28,52 @@ func TestCli_encode_err(t *testing.T) {
 	g.Expect(err).Should(HaveOccurred())
 }
 
+func TestCli_encode_ToJSON(t *testing.T) {
+	g := NewWithT(t)
+	_, err := New(map[string]interface{}{
+	}).encode()
+	g.Expect(err).ShouldNot(HaveOccurred())
+}
+
+func TestCli_encode_ToYaml_true(t *testing.T) {
+	g := NewWithT(t)
+	_, err := New(map[string]interface{}{
+		"--toYAML": true,
+	}).encode()
+	g.Expect(err).ShouldNot(HaveOccurred())
+}
+
+func TestCli_encode_ToYaml_false(t *testing.T) {
+	g := NewWithT(t)
+	_, err := New(map[string]interface{}{
+		"--toYAML": false,
+	}).encode()
+	g.Expect(err).ShouldNot(HaveOccurred())
+}
+
+func TestCli_reader_error_no_path(t *testing.T) {
+	g := NewWithT(t)
+	_, err := New(map[string]interface{}{
+	}).reader()
+	g.Expect(err).Should(HaveOccurred())
+}
+
+func TestCli_reader_http_error(t *testing.T) {
+	g := NewWithT(t)
+	_, err := New(map[string]interface{}{
+		"<PATH>": "http://atest",
+	}).reader()
+	g.Expect(err).Should(HaveOccurred())
+}
+
+func TestCli_reader_file_error(t *testing.T) {
+	g := NewWithT(t)
+	_, err := New(map[string]interface{}{
+		"<PATH>": "/invalid/path/to/a/file",
+	}).reader()
+	g.Expect(err).Should(HaveOccurred())
+}
+
 func TestIsUrl(t *testing.T) {
 	tests := []struct {
 		url   string
