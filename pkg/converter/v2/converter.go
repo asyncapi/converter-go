@@ -45,7 +45,7 @@ func (c *converter) Convert(reader io.Reader, writer io.Writer) error {
 	steps := []func() error{
 		c.buildDecodeFunction(reader),
 		c.verifyAsyncapiVersion,
-		c.updateId,
+		c.updateID,
 		c.updateVersion,
 		c.updateServers,
 		c.createChannels,
@@ -63,7 +63,7 @@ func (c *converter) Convert(reader io.Reader, writer io.Writer) error {
 
 type ConverterOption func(*converter) error
 
-func NewConverter(decode Decode, encode Encode, options ...ConverterOption) (*converter, error) {
+func New(decode Decode, encode Encode, options ...ConverterOption) (*converter, error) {
 	converter := converter{
 		encode: encode,
 		decode: decode,
@@ -76,14 +76,14 @@ func NewConverter(decode Decode, encode Encode, options ...ConverterOption) (*co
 	return &converter, nil
 }
 
-func WithId(id *string) ConverterOption {
+func WithID(id *string) ConverterOption {
 	return func(converter *converter) error {
 		converter.id = id
 		return nil
 	}
 }
 
-func (c *converter) updateId() error {
+func (c *converter) updateID() error {
 	if c.id != nil {
 		c.data["id"] = *c.id
 		return nil
@@ -96,7 +96,7 @@ func (c *converter) updateId() error {
 	if !ok {
 		return asyncapierr.NewInvalidPropertyError("title")
 	}
-	c.data["id"] = fmt.Sprintf(`urn:%s`, extractId(fmt.Sprintf("%v", title)))
+	c.data["id"] = fmt.Sprintf(`urn:%s`, extractID(fmt.Sprintf("%v", title)))
 	return nil
 }
 
@@ -238,7 +238,7 @@ func (c *converter) createChannels() error {
 	return asyncapierr.NewInvalidPropertyError("missing one of topics/stream/events")
 }
 
-func extractId(value string) string {
+func extractID(value string) string {
 	title := strings.ToLower(value)
 	return strings.Join(strings.Split(title, " "), ".")
 }

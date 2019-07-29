@@ -46,7 +46,7 @@ func TestUnmarshalYaml(t *testing.T) {
 
 func TestUnmarshalYamlReaderError(t *testing.T) {
 	g := NewWithT(t)
-	err := FromJsonWithYamlFallback(nil, errNoProgressReader)
+	err := FromJSONWithYamlFallback(nil, errNoProgressReader)
 	g.Expect(err).Should(HaveOccurred())
 }
 
@@ -54,7 +54,7 @@ func TestUnmarshalYamlReaderError2(t *testing.T) {
 	g := NewWithT(t)
 	reader := strings.NewReader(",")
 	var out interface{}
-	err := FromJsonWithYamlFallback(&out, reader)
+	err := FromJSONWithYamlFallback(&out, reader)
 	g.Expect(err).Should(HaveOccurred())
 }
 

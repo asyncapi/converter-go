@@ -21,7 +21,7 @@ func main() {
 	}
 
 	// create yaml to json converter
-	converter, err := v2.NewConverter(decode.FromYaml, encode.ToJson)
+	converter, err := v2.New(decode.FromYaml, encode.ToJSON)
 	if err != nil {
 		log.Fatal(err)
 	}

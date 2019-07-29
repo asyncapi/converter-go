@@ -48,7 +48,7 @@ func (h cli) id() *string {
 
 func (h cli) encode() (Encode, error) {
 	if _, ok := h.Opts["--toYAML"]; !ok {
-		return asyncapiEncode.ToJson, nil
+		return asyncapiEncode.ToJSON, nil
 	}
 	toYaml, ok := h.Opts["--toYAML"].(bool)
 	if !ok {
@@ -57,10 +57,10 @@ func (h cli) encode() (Encode, error) {
 	if toYaml {
 		return asyncapiEncode.ToYaml, nil
 	}
-	return asyncapiEncode.ToJson, nil
+	return asyncapiEncode.ToJSON, nil
 }
 
-func isUrl(str string) bool {
+func isURL(str string) bool {
 	u, err := url.Parse(str)
 	return err == nil && u.Scheme != "" && u.Host != ""
 }
@@ -68,7 +68,7 @@ func isUrl(str string) bool {
 func (h cli) reader() (io.Reader, error) {
 	fileOption := h.Opts["<PATH>"]
 	path := fmt.Sprintf("%v", fileOption)
-	if isUrl(path) {
+	if isURL(path) {
 		resp, err := http.Get(path)
 		if err != nil {
 			return nil, err
@@ -94,6 +94,6 @@ func (h cli) NewConverterAndReader() (Converter, io.Reader, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	converter, err := v2.NewConverter(decode.FromJsonWithYamlFallback, encode, v2.WithId(h.id()))
+	converter, err := v2.New(decode.FromJSONWithYamlFallback, encode, v2.WithID(h.id()))
 	return converter, reader, err
 }

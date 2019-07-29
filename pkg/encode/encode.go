@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-func ToJson(i interface{}, writer io.Writer) error {
+func ToJSON(i interface{}, writer io.Writer) error {
 	return json.NewEncoder(writer).Encode(i)
 }
 

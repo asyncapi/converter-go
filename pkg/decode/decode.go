@@ -11,7 +11,7 @@ import (
 
 type unmarshalFunc func([]byte, interface{}) error
 
-func FromJson(v interface{}, reader io.Reader) error {
+func FromJSON(v interface{}, reader io.Reader) error {
 	return json.NewDecoder(reader).Decode(&v)
 }
 
@@ -27,7 +27,7 @@ func FromYaml(v interface{}, reader io.Reader) error {
 	return nil
 }
 
-func FromJsonWithYamlFallback(out interface{}, reader io.Reader) error {
+func FromJSONWithYamlFallback(out interface{}, reader io.Reader) error {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return err

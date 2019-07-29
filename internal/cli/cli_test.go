@@ -31,7 +31,7 @@ func TestCli_encode_err(t *testing.T) {
 func TestIsUrl(t *testing.T) {
 	tests := []struct {
 		url   string
-		isUrl bool
+		isURL bool
 	}{
 		{"/test/me", false},
 		{"http://test.it", true},
@@ -40,7 +40,7 @@ func TestIsUrl(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.url, func(t *testing.T) {
 			g := NewWithT(t)
-			g.Expect(isUrl(test.url)).To(Equal(test.isUrl))
+			g.Expect(isURL(test.url)).To(Equal(test.isURL))
 		})
 	}
 }

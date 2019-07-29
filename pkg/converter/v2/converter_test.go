@@ -18,7 +18,7 @@ type Converter interface {
 }
 
 func TestNewJsonConverter(t *testing.T) {
-	testId := "test"
+	testID := "test"
 	tests := []struct {
 		inputFilePath    string
 		expectedFilePath string
@@ -48,7 +48,7 @@ func TestNewJsonConverter(t *testing.T) {
 			inputFilePath:    "./testdata/input/gitter-streaming1.2.0_with_id_option.json",
 			expectedFilePath: "./testdata/output/gitter-streaming_with_id_option.json",
 			options: []ConverterOption{
-				WithId(&testId),
+				WithID(&testID),
 			},
 		},
 		{
@@ -63,7 +63,7 @@ func TestNewJsonConverter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewConverter(decode.FromJson, encode.ToJson, test.options...)
+			converter, err := New(decode.FromJSON, encode.ToJSON, test.options...)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			result := convertFile(converter, test.inputFilePath, g)
 			expected, err := ioutil.ReadFile(test.expectedFilePath)
@@ -74,7 +74,7 @@ func TestNewJsonConverter(t *testing.T) {
 }
 
 func TestNewConverter(t *testing.T) {
-	testId := "test"
+	testID := "test"
 	tests := []struct {
 		inputFilePath    string
 		expectedFilePath string
@@ -116,7 +116,7 @@ func TestNewConverter(t *testing.T) {
 			inputFilePath:    "./testdata/input/gitter-streaming1.2.0_with_id_option.json",
 			expectedFilePath: "./testdata/output/gitter-streaming_with_id_option.yml",
 			options: []ConverterOption{
-				WithId(&testId),
+				WithID(&testID),
 			},
 		},
 		{
@@ -131,7 +131,7 @@ func TestNewConverter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewConverter(decode.FromJsonWithYamlFallback, encode.ToYaml, test.options...)
+			converter, err := New(decode.FromJSONWithYamlFallback, encode.ToYaml, test.options...)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			result := convertFile(converter, test.inputFilePath, g)
 			expected, err := ioutil.ReadFile(test.expectedFilePath)
@@ -167,7 +167,7 @@ func TestNewYamlConverter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewConverter(decode.FromJsonWithYamlFallback, encode.ToYaml)
+			converter, err := New(decode.FromJSONWithYamlFallback, encode.ToYaml)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			result := convertFile(converter, test.inputFilePath, g)
 			expected, err := ioutil.ReadFile(test.expectedFilePath)
@@ -209,7 +209,7 @@ func TestConverter_Do_Invalid(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
 			g := NewWithT(t)
-			converter, err := NewConverter(decode.FromJson, encode.ToJson)
+			converter, err := New(decode.FromJSON, encode.ToJSON)
 			g.Expect(err).To(BeNil(), "error while creating converter")
 			_, err = readDataFromFile(converter, test.inputFilePath, g)
 			g.Expect(err).Should(HaveOccurred())
