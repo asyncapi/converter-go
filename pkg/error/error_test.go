@@ -16,17 +16,17 @@ func TestIsInvalidPropertyErr(t *testing.T) {
 	}{
 		{
 			name:     "ErrInvalidProperty",
-			error:    NewInvalidPropertyError("test"),
+			error:    NewInvalidProperty("test"),
 			expected: true,
 		},
 		{
 			name:     "ErrInvalidDocument",
-			error:    NewInvalidDocumentError(),
+			error:    NewInvalidDocument(),
 			expected: false,
 		},
 		{
 			name:     "ErrUnsupportedAsyncapiVersion",
-			error:    NewUnsupportedAsyncapiVersionError("test"),
+			error:    NewUnsupportedAsyncapiVersion("test"),
 			expected: false,
 		},
 		{
@@ -54,17 +54,17 @@ func TestIsErrInvalidDocumentErr(t *testing.T) {
 	}{
 		{
 			name:     "ErrInvalidProperty",
-			error:    NewInvalidPropertyError("test"),
+			error:    NewInvalidProperty("test"),
 			expected: false,
 		},
 		{
 			name:     "ErrInvalidDocument",
-			error:    NewInvalidDocumentError(),
+			error:    NewInvalidDocument(),
 			expected: true,
 		},
 		{
 			name:     "ErrUnsupportedAsyncapiVersion",
-			error:    NewUnsupportedAsyncapiVersionError("test"),
+			error:    NewUnsupportedAsyncapiVersion("test"),
 			expected: false,
 		},
 	}
@@ -87,17 +87,17 @@ func TestIsErrUnsupportedAsyncapiVersionErr(t *testing.T) {
 	}{
 		{
 			name:     "ErrInvalidProperty",
-			error:    NewInvalidPropertyError("test"),
+			error:    NewInvalidProperty("test"),
 			expected: false,
 		},
 		{
 			name:     "ErrInvalidDocument",
-			error:    NewInvalidDocumentError(),
+			error:    NewInvalidDocument(),
 			expected: false,
 		},
 		{
 			name:     "ErrUnsupportedAsyncapiVersion",
-			error:    NewUnsupportedAsyncapiVersionError("test"),
+			error:    NewUnsupportedAsyncapiVersion("test"),
 			expected: true,
 		},
 	}

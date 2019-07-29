@@ -45,16 +45,16 @@ func newError(errType errType, msg string) Error {
 	}
 }
 
-func NewInvalidPropertyError(context interface{}) Error {
+func NewInvalidProperty(context interface{}) Error {
 	msg := fmt.Sprintf("asyncapi: error invalid property %v", context)
 	return newError(errInvalidProperty, msg)
 }
 
-func NewInvalidDocumentError() Error {
+func NewInvalidDocument() Error {
 	return newError(errInvalidDocument, "asyncapi: unable to decode document")
 }
 
-func NewUnsupportedAsyncapiVersionError(context interface{}) Error {
+func NewUnsupportedAsyncapiVersion(context interface{}) Error {
 	msg := fmt.Sprintf("asyncapi: unsupported asyncapi version '%v'", context)
 	return newError(errUnsupportedAsyncapiVersion, msg)
 }
