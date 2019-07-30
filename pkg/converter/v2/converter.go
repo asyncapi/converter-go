@@ -1,7 +1,7 @@
 package v2
 
 import (
-	asyncapierr "asyncapi-converter/pkg/error"
+	asyncapierr "github.com/asyncapi/converter-go/pkg/error"
 
 	"fmt"
 	"io"

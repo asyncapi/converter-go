@@ -1,4 +1,4 @@
-module asyncapi-converter
+module github.com/asyncapi/converter-go
 
 go 1.12
 

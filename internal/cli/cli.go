@@ -4,9 +4,9 @@ import (
 	"github.com/docopt/docopt-go"
 	"github.com/pkg/errors"
 
-	v2 "asyncapi-converter/pkg/converter/v2"
-	"asyncapi-converter/pkg/decode"
-	asyncapiEncode "asyncapi-converter/pkg/encode"
+	v2 "github.com/asyncapi/converter-go/pkg/converter/v2"
+	"github.com/asyncapi/converter-go/pkg/decode"
+	asyncapiEncode "github.com/asyncapi/converter-go/pkg/encode"
 
 	"fmt"
 	"io"
