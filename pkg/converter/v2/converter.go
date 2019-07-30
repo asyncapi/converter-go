@@ -9,11 +9,19 @@ import (
 	"strings"
 )
 
+// AsyncapiVersion is the version of asyncapi that the document will be converted to.
 const AsyncapiVersion = "2.0.0-rc1"
 
+// Decode reads an asyncapi document from an input and stores it in the value.
 type Decode = func(interface{}, io.Reader) error
 
+// Encode writes an asyncapi document encoding into a stream.
 type Encode = func(interface{}, io.Writer) error
+
+// Converter converts an asyncapi document from version 1.0.0, 1.1.1 and 1.2.0 to version 2.0.0.
+type Converter interface {
+	Convert(reader io.Reader, writer io.Writer) error
+}
 
 type converter struct {
 	id     *string
@@ -61,9 +69,14 @@ func (c *converter) Convert(reader io.Reader, writer io.Writer) error {
 	return nil
 }
 
+// ConverterOption is a functional option that allows to provide
+// a meaningful converter configuration that can grow over time.
 type ConverterOption func(*converter) error
 
-func New(decode Decode, encode Encode, options ...ConverterOption) (*converter, error) {
+// New creates a new converter.
+//
+// See Decode, Encode and ConverterOption
+func New(decode Decode, encode Encode, options ...ConverterOption) (Converter, error) {
 	converter := converter{
 		encode: encode,
 		decode: decode,
@@ -76,6 +89,7 @@ func New(decode Decode, encode Encode, options ...ConverterOption) (*converter, 
 	return &converter, nil
 }
 
+// WithID is the functional option that allows to specify the application id.
 func WithID(id *string) ConverterOption {
 	return func(converter *converter) error {
 		converter.id = id

@@ -13,10 +13,6 @@ import (
 	"testing"
 )
 
-type Converter interface {
-	Convert(reader io.Reader, writer io.Writer) error
-}
-
 func TestNewJsonConverter(t *testing.T) {
 	testID := "test"
 	tests := []struct {

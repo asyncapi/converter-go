@@ -20,24 +20,30 @@ var (
 	errInvalidArgument  = errors.New("invalid argument")
 )
 
-type Encode = func(interface{}, io.Writer) error
+type encode = func(interface{}, io.Writer) error
 
+// Converter converts asyncapi document.
 type Converter interface {
 	Convert(reader io.Reader, writer io.Writer) error
 }
 
-type cli struct {
+var _ v2.Converter = Converter(nil)
+
+// Cli is a helper type that allows to instantiate asyncapi converter and io reader of
+// converted document with arguments passed from terminal.
+type Cli struct {
 	docopt.Opts
 	data interface{}
 }
 
-func New(opts docopt.Opts) cli {
-	return cli{
+// New returns a new Cli instance
+func New(opts docopt.Opts) Cli {
+	return Cli{
 		Opts: opts,
 	}
 }
 
-func (h cli) id() *string {
+func (h Cli) id() *string {
 	idOption, ok := h.Opts["--id"]
 	if !ok || idOption == nil {
 		return nil
@@ -46,7 +52,7 @@ func (h cli) id() *string {
 	return &id
 }
 
-func (h cli) encode() (Encode, error) {
+func (h Cli) encode() (encode, error) {
 	if _, ok := h.Opts["--toYAML"]; !ok {
 		return asyncapiEncode.ToJSON, nil
 	}
@@ -65,7 +71,7 @@ func isURL(str string) bool {
 	return err == nil && u.Scheme != "" && u.Host != ""
 }
 
-func (h cli) reader() (io.Reader, error) {
+func (h Cli) reader() (io.Reader, error) {
 	fileOption := h.Opts["<PATH>"]
 	path := fmt.Sprintf("%v", fileOption)
 	if isURL(path) {
@@ -85,7 +91,8 @@ func (h cli) reader() (io.Reader, error) {
 	return file, nil
 }
 
-func (h cli) NewConverterAndReader() (Converter, io.Reader, error) {
+// NewConverterAndReader creates both a converter and a reader of the converted asyncapi document.
+func (h Cli) NewConverterAndReader() (Converter, io.Reader, error) {
 	reader, err := h.reader()
 	if err != nil {
 		return nil, nil, err
