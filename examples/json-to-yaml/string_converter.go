@@ -1,9 +1,9 @@
 package main
 
 import (
-	v2 "asyncapi-converter/pkg/converter/v2"
-	"asyncapi-converter/pkg/decode"
-	"asyncapi-converter/pkg/encode"
+	v2 "github.com/asyncapi/converter-go/pkg/converter/v2"
+	"github.com/asyncapi/converter-go/pkg/decode"
+	"github.com/asyncapi/converter-go/pkg/encode"
 
 	"log"
 	"os"

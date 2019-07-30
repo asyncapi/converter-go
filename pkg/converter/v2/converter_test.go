@@ -1,8 +1,8 @@
 package v2
 
 import (
-	"asyncapi-converter/pkg/decode"
-	"asyncapi-converter/pkg/encode"
+	"github.com/asyncapi/converter-go/pkg/decode"
+	"github.com/asyncapi/converter-go/pkg/encode"
 	. "github.com/onsi/gomega"
 
 	"bytes"

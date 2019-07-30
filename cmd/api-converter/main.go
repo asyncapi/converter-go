@@ -1,10 +1,10 @@
 package main
 
 import (
-	"asyncapi-converter/internal/cli"
+	"github.com/asyncapi/converter-go/internal/cli"
 	"github.com/docopt/docopt-go"
 
-	"asyncapi-converter/pkg/converter/v2"
+	"github.com/asyncapi/converter-go/pkg/converter/v2"
 
 	"fmt"
 	"log"
