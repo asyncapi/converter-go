@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-// ToJSON writes an asyncapi document in JSON format into a stream
+// ToJSON writes an AsyncAPI document in the JSON format encoding it into a stream.
 func ToJSON(i interface{}, writer io.Writer) error {
 	return json.NewEncoder(writer).Encode(i)
 }
