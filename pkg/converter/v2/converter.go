@@ -69,7 +69,7 @@ func (c *converter) Convert(reader io.Reader, writer io.Writer) error {
 	return nil
 }
 
-// ConverterOption is a functional option that allows to provide
+// ConverterOption is a functional option that allows you to provide
 // a meaningful converter configuration that can grow over time.
 type ConverterOption func(*converter) error
 
