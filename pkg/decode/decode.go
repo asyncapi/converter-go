@@ -20,7 +20,7 @@ func FromJSON(v interface{}, reader io.Reader) error {
 }
 
 // FromYaml reads an AsyncAPI document from input in the YAML format
-// and stores it in the value. If operation fails it returns error.
+// and stores it in the value. If the operation fails, the function returns an error.
 //
 // See InvalidProperty, InvalidDocument, UnsupportedAsyncapiVersion in pkg error.
 func FromYaml(v interface{}, reader io.Reader) error {
