@@ -28,7 +28,7 @@ func isErrorType(errType errType, err error) bool {
 }
 
 // IsInvalidProperty returns true if err is InvalidProperty error,
-// otherwise returns false.
+// otherwise it returns false.
 //
 // See NewInvalidProperty
 func IsInvalidProperty(err error) bool {
