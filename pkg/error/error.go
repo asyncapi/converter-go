@@ -38,7 +38,7 @@ func IsInvalidProperty(err error) bool {
 // IsInvalidDocument returns true if err is the InvalidDocument error,
 // otherwise it returns false.
 //
-// See NewInvalidDocument
+// See NewInvalidDocument.
 func IsInvalidDocument(err error) bool {
 	return isErrorType(errInvalidDocument, err)
 }
