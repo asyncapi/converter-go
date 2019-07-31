@@ -74,7 +74,7 @@ func NewInvalidDocument() Error {
 
 // NewUnsupportedAsyncapiVersion creates new unsupported asyncapi version error.
 // This error is returned when converter does not recognize the version of the
-// converted asyncapi document.
+// converted AsyncAPI document.
 func NewUnsupportedAsyncapiVersion(context interface{}) Error {
 	msg := fmt.Sprintf("asyncapi: unsupported asyncapi version '%v'", context)
 	return newError(errUnsupportedAsyncapiVersion, msg)
