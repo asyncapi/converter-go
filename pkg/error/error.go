@@ -10,7 +10,7 @@ const (
 	errUnsupportedAsyncapiVersion
 )
 
-// Error represents conversion error
+// Error represents the conversion error.
 type Error struct {
 	errType
 	msg string
