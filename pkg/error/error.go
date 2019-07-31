@@ -46,7 +46,7 @@ func IsInvalidDocument(err error) bool {
 // IsUnsupportedAsyncapiVersion returns true if err is the UnsupportedAsyncapiVersion error,
 // otherwise returns false.
 //
-// See UnsupportedAsyncapiVersion
+// See UnsupportedAsyncapiVersion.
 func IsUnsupportedAsyncapiVersion(err error) bool {
 	return isErrorType(errUnsupportedAsyncapiVersion, err)
 }
