@@ -89,7 +89,7 @@ func New(decode Decode, encode Encode, options ...ConverterOption) (Converter, e
 	return &converter, nil
 }
 
-// WithID is the functional option that allows to specify the application id.
+// WithID is a functional option that allows you to specify the application ID.
 func WithID(id *string) ConverterOption {
 	return func(converter *converter) error {
 		converter.id = id
