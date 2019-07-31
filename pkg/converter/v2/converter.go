@@ -12,7 +12,7 @@ import (
 // AsyncapiVersion is the AsyncAPI version that the document will be converted to.
 const AsyncapiVersion = "2.0.0-rc1"
 
-// Decode reads an asyncapi document from an input and stores it in the value.
+// Decode reads an AsyncAPI document from input and stores it in the value.
 type Decode = func(interface{}, io.Reader) error
 
 // Encode writes an AsyncAPI document encoding it into a stream.
