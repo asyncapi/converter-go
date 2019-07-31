@@ -91,7 +91,7 @@ func (h Cli) reader() (io.Reader, error) {
 	return file, nil
 }
 
-// NewConverterAndReader creates both a converter and a reader of the converted asyncapi document.
+// NewConverterAndReader creates both a converter and a reader of the converted AsyncAPI document.
 func (h Cli) NewConverterAndReader() (Converter, io.Reader, error) {
 	reader, err := h.reader()
 	if err != nil {
