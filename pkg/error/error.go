@@ -66,7 +66,7 @@ func NewInvalidProperty(context interface{}) Error {
 	return newError(errInvalidProperty, msg)
 }
 
-// NewInvalidDocument creates new invalid document error.
+// NewInvalidDocument creates a new invalid document error.
 // This error is returned by the AsyncAPI Converter when a document has an invalid structure.
 func NewInvalidDocument() Error {
 	return newError(errInvalidDocument, "asyncapi: unable to decode document")
