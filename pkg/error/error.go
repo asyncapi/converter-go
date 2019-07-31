@@ -72,7 +72,7 @@ func NewInvalidDocument() Error {
 	return newError(errInvalidDocument, "asyncapi: unable to decode document")
 }
 
-// NewUnsupportedAsyncapiVersion creates new unsupported asyncapi version error.
+// NewUnsupportedAsyncapiVersion creates a new unsupported AsyncAPI version error.
 // This error is returned when the AsyncAPI converter does not recognize the version of the
 // converted AsyncAPI document.
 func NewUnsupportedAsyncapiVersion(context interface{}) Error {
