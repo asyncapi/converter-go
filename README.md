@@ -69,7 +69,7 @@ See the following minimal examples of the AsyncAPI Converter usage in the termin
 
 ### As a package
 
-To see examples how to use the AsyncAPI Converter as a package, go to the [README.md](./examples/README.md).
+To see examples of how to use the AsyncAPI Converter as a package, go to the [README.md](./examples/README.md).
 
 ## Contribution
 
