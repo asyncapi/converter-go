@@ -75,7 +75,7 @@ type ConverterOption func(*converter) error
 
 // New creates a new converter.
 //
-// See Decode, Encode and ConverterOption
+// See Decode, Encode and ConverterOption.
 func New(decode Decode, encode Encode, options ...ConverterOption) (Converter, error) {
 	converter := converter{
 		encode: encode,
