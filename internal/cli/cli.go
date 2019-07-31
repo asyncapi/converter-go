@@ -29,7 +29,7 @@ type Converter interface {
 
 var _ v2.Converter = Converter(nil)
 
-// Cli is a helper type that allows to instantiate asyncapi converter and io reader of
+// Cli is a helper type that allows you to instantiate the AsyncAPI Converter and io.Reader of
 // converted document with arguments passed from terminal.
 type Cli struct {
 	docopt.Opts
