@@ -11,7 +11,7 @@ import (
 
 type unmarshalFunc func([]byte, interface{}) error
 
-// FromJSON reads an asyncapi document from an input in a JSON format
+// FromJSON reads an AsyncAPI document from input in a JSON format
 // and stores it in the value. If operation fails function returns an error.
 //
 // See InvalidProperty, InvalidDocument, UnsupportedAsyncapiVersion in pkg error.
