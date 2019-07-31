@@ -36,7 +36,7 @@ type Cli struct {
 	data interface{}
 }
 
-// New returns a new Cli instance
+// New returns a new Cli instance.
 func New(opts docopt.Opts) Cli {
 	return Cli{
 		Opts: opts,
