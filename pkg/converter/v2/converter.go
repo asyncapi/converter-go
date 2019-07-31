@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// AsyncapiVersion is the version of asyncapi that the document will be converted to.
+// AsyncapiVersion is the AsyncAPI version that the document will be converted to.
 const AsyncapiVersion = "2.0.0-rc1"
 
 // Decode reads an asyncapi document from an input and stores it in the value.
