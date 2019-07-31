@@ -59,7 +59,7 @@ func newError(errType errType, msg string) Error {
 }
 
 // NewInvalidProperty creates new invalid property error.
-// This error is returned by converter when one of the document
+// This error is returned by the AsynAPI Converter when one of the document
 // properties is invalid or missing.
 func NewInvalidProperty(context interface{}) Error {
 	msg := fmt.Sprintf("asyncapi: error invalid property %v", context)
