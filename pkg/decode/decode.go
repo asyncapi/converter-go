@@ -36,7 +36,7 @@ func FromYaml(v interface{}, reader io.Reader) error {
 }
 
 // FromJSONWithYamlFallback reads an AsyncAPI document from input in the JSON format.
-// if this operation fails, the function tries to read an asyncapi document in yaml format.
+// If the operation fails, the function tries to read the AsyncAPI document in the YAML format.
 // If any decoding attempt succeeds, the result is stored in the value.
 // If both decoding attempts fail, function returns an error.
 //
