@@ -15,7 +15,7 @@ const AsyncapiVersion = "2.0.0-rc1"
 // Decode reads an asyncapi document from an input and stores it in the value.
 type Decode = func(interface{}, io.Reader) error
 
-// Encode writes an asyncapi document encoding into a stream.
+// Encode writes an AsyncAPI document encoding it into a stream.
 type Encode = func(interface{}, io.Writer) error
 
 // Converter converts an asyncapi document from version 1.0.0, 1.1.1 and 1.2.0 to version 2.0.0.
