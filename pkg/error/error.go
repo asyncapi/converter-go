@@ -1,6 +1,8 @@
 package error
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type errType = int
 
@@ -8,6 +10,7 @@ const (
 	errInvalidProperty errType = iota + 1
 	errInvalidDocument
 	errUnsupportedAsyncapiVersion
+	errDocumentVersionUpToDate
 )
 
 type Error struct {
@@ -38,6 +41,10 @@ func IsUnsupportedAsyncapiVersion(err error) bool {
 	return isErrorType(errUnsupportedAsyncapiVersion, err)
 }
 
+func IsDocumentVersionUpToDate(err error) bool {
+	return isErrorType(errDocumentVersionUpToDate, err)
+}
+
 func newError(errType errType, msg string) Error {
 	return Error{
 		errType: errType,
@@ -57,4 +64,9 @@ func NewInvalidDocument() Error {
 func NewUnsupportedAsyncapiVersion(context interface{}) Error {
 	msg := fmt.Sprintf("asyncapi: unsupported asyncapi version '%v'", context)
 	return newError(errUnsupportedAsyncapiVersion, msg)
+}
+
+func NewDocumentVersionUpToDate(context interface{}) Error {
+	msg := fmt.Sprintf("asyncapi: document is already in version: %v", context)
+	return newError(errDocumentVersionUpToDate, msg)
 }

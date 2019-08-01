@@ -238,3 +238,65 @@ func readDataFromFile(converter Converter, filePath string, g *WithT) (*bytes.Bu
 	err = converter.Convert(resultReader, resultWriter)
 	return resultWriter, err
 }
+
+func TestVerifyAsyncapiVersion_no_error(t *testing.T) {
+	tests := []struct {
+		name, version string
+	}{
+		{
+			name:    "valid version 1.0.0",
+			version: "1.0.0",
+		},
+		{
+			name:    "valid version 1.1.0",
+			version: "1.1.0",
+		},
+		{
+			name:    "valid version 1.2.0",
+			version: "1.2.0",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			g := NewWithT(t)
+			c := converter{
+				data: map[string]interface{}{
+					"asyncapi": test.version,
+				},
+			}
+			err := c.verifyAsyncapiVersion()
+			g.Expect(err).ShouldNot(HaveOccurred())
+		})
+	}
+}
+
+func TestVerifyAsyncapiVersion_error(t *testing.T) {
+	tests := []struct {
+		name      string
+		converter converter
+	}{
+		{
+			name: "document version is up to date",
+			converter: converter{
+				data: map[string]interface{}{
+					"asyncapi": AsyncapiVersion,
+				},
+			},
+		},
+		{
+			name: "invalid version 123.333333",
+			converter: converter{
+				data: map[string]interface{}{
+					"asyncapi": "123.333333",
+				},
+			},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			g := NewWithT(t)
+			err := test.converter.verifyAsyncapiVersion()
+			g.Expect(err).Should(HaveOccurred())
+		})
+	}
+}

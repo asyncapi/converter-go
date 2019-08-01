@@ -251,8 +251,10 @@ func (c *converter) verifyAsyncapiVersion() error {
 		return asyncapierr.NewInvalidProperty("asyncapi")
 	}
 	versionString := fmt.Sprintf("%v", version)
-	switch versionRegexp.Match([]byte(versionString)) {
-	case true:
+	switch {
+	case versionString == AsyncapiVersion:
+		return asyncapierr.NewDocumentVersionUpToDate(AsyncapiVersion)
+	case versionRegexp.Match([]byte(versionString)):
 		return nil
 	default:
 		return asyncapierr.NewUnsupportedAsyncapiVersion(versionString)
