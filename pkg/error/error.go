@@ -54,6 +54,10 @@ func IsUnsupportedAsyncapiVersion(err error) bool {
 	return isErrorType(errUnsupportedAsyncapiVersion, err)
 }
 
+// IsDocumentVersionUpToDate returns true if err is the DocumentVersionUpToDate error,
+// otherwise it returns false.
+//
+// See DocumentVersionUpToDate.
 func IsDocumentVersionUpToDate(err error) bool {
 	return isErrorType(errDocumentVersionUpToDate, err)
 }
@@ -87,6 +91,8 @@ func NewUnsupportedAsyncapiVersion(context interface{}) Error {
 	return newError(errUnsupportedAsyncapiVersion, msg)
 }
 
+// NewDocumentVersionUpToDate creates a new document version is up to date error.
+// This error is returned by the AsyncAPI Converter when a document version is up to date.
 func NewDocumentVersionUpToDate(context interface{}) Error {
 	msg := fmt.Sprintf("asyncapi: document is already in version: %v", context)
 	return newError(errDocumentVersionUpToDate, msg)

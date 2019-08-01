@@ -12,7 +12,7 @@ import (
 type unmarshalFunc func([]byte, interface{}) error
 
 // FromJSON reads an AsyncAPI document from input in a JSON format
-// and stores it in the value. If operation fails function returns an error.
+// and stores it in the value. If the operation fails, the function returns an error.
 //
 // See InvalidProperty, InvalidDocument, UnsupportedAsyncapiVersion in pkg/error.
 func FromJSON(v interface{}, reader io.Reader) error {
