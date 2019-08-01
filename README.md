@@ -15,7 +15,7 @@ The AsyncAPI Converter converts AsyncAPI documents from versions 1.0.0, 1.1.0 an
  To install the AsyncAPI Converter package, run:
 
 ```bash
-go get github.com/asyncapi/converter-go
+go get github.com/asyncapi/converter-go/...
 ```
 
 ## Usage
