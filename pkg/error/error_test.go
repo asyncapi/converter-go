@@ -34,6 +34,11 @@ func TestIsInvalidPropertyErr(t *testing.T) {
 			error:    err,
 			expected: false,
 		},
+		{
+			name:     "DocumentVersionUpToDate",
+			error:    NewDocumentVersionUpToDate("test"),
+			expected: false,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -65,6 +70,11 @@ func TestIsErrInvalidDocumentErr(t *testing.T) {
 		{
 			name:     "ErrUnsupportedAsyncapiVersion",
 			error:    NewUnsupportedAsyncapiVersion("test"),
+			expected: false,
+		},
+		{
+			name:     "DocumentVersionUpToDate",
+			error:    NewDocumentVersionUpToDate("test"),
 			expected: false,
 		},
 	}
@@ -100,11 +110,54 @@ func TestIsErrUnsupportedAsyncapiVersionErr(t *testing.T) {
 			error:    NewUnsupportedAsyncapiVersion("test"),
 			expected: true,
 		},
+		{
+			name:     "DocumentVersionUpToDate",
+			error:    NewDocumentVersionUpToDate("test"),
+			expected: false,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			g := NewWithT(t)
 			g.Expect(IsUnsupportedAsyncapiVersion(test.error)).To(Equal(test.expected))
+			if actual, ok := test.error.(Error); ok {
+				g.Expect(actual.Error()).ToNot(BeEmpty())
+			}
+		})
+	}
+}
+
+func TestDocumentVersionUpToDateErr(t *testing.T) {
+	tests := []struct {
+		name     string
+		error    error
+		expected bool
+	}{
+		{
+			name:     "ErrInvalidProperty",
+			error:    NewInvalidProperty("test"),
+			expected: false,
+		},
+		{
+			name:     "ErrInvalidDocument",
+			error:    NewInvalidDocument(),
+			expected: false,
+		},
+		{
+			name:     "ErrUnsupportedAsyncapiVersion",
+			error:    NewUnsupportedAsyncapiVersion("test"),
+			expected: false,
+		},
+		{
+			name:     "DocumentVersionUpToDate",
+			error:    NewDocumentVersionUpToDate("test"),
+			expected: true,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			g := NewWithT(t)
+			g.Expect(IsDocumentVersionUpToDate(test.error)).To(Equal(test.expected))
 			if actual, ok := test.error.(Error); ok {
 				g.Expect(actual.Error()).ToNot(BeEmpty())
 			}
