@@ -22,7 +22,7 @@ var (
 
 type encode = func(interface{}, io.Writer) error
 
-// Converter converts asyncapi document.
+// Converter converts an AsyncAPI document.
 type Converter interface {
 	Convert(reader io.Reader, writer io.Writer) error
 }
