@@ -30,8 +30,7 @@ func TestCli_encode_err(t *testing.T) {
 
 func TestCli_encode_ToJSON(t *testing.T) {
 	g := NewWithT(t)
-	_, err := New(map[string]interface{}{
-	}).encode()
+	_, err := New(map[string]interface{}{}).encode()
 	g.Expect(err).ShouldNot(HaveOccurred())
 }
 
@@ -53,8 +52,7 @@ func TestCli_encode_ToYaml_false(t *testing.T) {
 
 func TestCli_reader_error_no_path(t *testing.T) {
 	g := NewWithT(t)
-	_, err := New(map[string]interface{}{
-	}).reader()
+	_, err := New(map[string]interface{}{}).reader()
 	g.Expect(err).Should(HaveOccurred())
 }
 

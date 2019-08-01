@@ -11,10 +11,18 @@ import (
 
 type unmarshalFunc func([]byte, interface{}) error
 
+// FromJSON reads an AsyncAPI document from input in a JSON format
+// and stores it in the value. If operation fails function returns an error.
+//
+// See InvalidProperty, InvalidDocument, UnsupportedAsyncapiVersion in pkg/error.
 func FromJSON(v interface{}, reader io.Reader) error {
 	return json.NewDecoder(reader).Decode(&v)
 }
 
+// FromYaml reads an AsyncAPI document from input in the YAML format
+// and stores it in the value. If the operation fails, the function returns an error.
+//
+// See InvalidProperty, InvalidDocument, UnsupportedAsyncapiVersion in pkg/error.
 func FromYaml(v interface{}, reader io.Reader) error {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
@@ -27,6 +35,12 @@ func FromYaml(v interface{}, reader io.Reader) error {
 	return nil
 }
 
+// FromJSONWithYamlFallback reads an AsyncAPI document from input in the JSON format.
+// If the operation fails, the function tries to read the AsyncAPI document in the YAML format.
+// If any of the decoding attempts succeeds, the result is stored in the value.
+// If both decoding attempts fail, the function returns an error.
+//
+// See InvalidProperty, InvalidDocument, UnsupportedAsyncapiVersion in pkg/error.
 func FromJSONWithYamlFallback(out interface{}, reader io.Reader) error {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
