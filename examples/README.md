@@ -2,4 +2,4 @@
 
 ## Overview 
 
-This directory contains examples how to use the AsyncAPI Converter as a package.
+This directory contains examples of how to use the AsyncAPI Converter as a package.

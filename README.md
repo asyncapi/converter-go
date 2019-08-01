@@ -1,6 +1,6 @@
 # AsyncAPI Converter
 
-[![Build Status](https://travis-ci.org/asyncapi/converter-go.svg?branch=master)](https://travis-ci.org/asyncapi/converter-go) [![Go Report Card](https://goreportcard.com/badge/github.com/asyncapi/converter-go)](https://goreportcard.com/report/github.com/asyncapi/converter-go) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/asyncapi/converter-go) ![GitHub last commit](https://img.shields.io/github/last-commit/asyncapi/converter-go) ![GitHub contributors](https://img.shields.io/github/contributors/asyncapi/converter-go) ![GitHub](https://img.shields.io/github/license/asyncapi/converter-go)
+[![Build Status](https://godoc.org/github.com/asyncapi/converter-go?status.svg)](https://godoc.org/github.com/asyncapi/converter-go) [![Build Status](https://travis-ci.org/asyncapi/converter-go.svg?branch=master)](https://travis-ci.org/asyncapi/converter-go) [![Go Report Card](https://goreportcard.com/badge/github.com/asyncapi/converter-go)](https://goreportcard.com/report/github.com/asyncapi/converter-go) 
 
 ## Overview
 
@@ -69,4 +69,17 @@ See the following minimal examples of the AsyncAPI Converter usage in the termin
 
 ### As a package
 
-To see examples how to use the AsyncAPI Converter as a package, go to the [README.md](./examples/README.md). 
+To see examples of how to use the AsyncAPI Converter as a package, go to the [README.md](./examples/README.md).
+
+## Contribution
+
+If you have a feature request, add it as an issue or propose changes in a pull request (PR).
+If you create a feature request, use the dedicated **Feature request** issue template. When you create a PR, follow the contributing rules described in the [`CONTRIBUTING.md`](CONTRIBUTING.md) document.
+
+## Credits
+
+<p align="center">
+ <a href="https://kyma-project.io/" target="_blank">
+  <img src="https://raw.githubusercontent.com/kyma-project/kyma/master/logo.png" width="235">
+ </a>
+</p>
