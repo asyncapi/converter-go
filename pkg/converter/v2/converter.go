@@ -1,16 +1,16 @@
 package v2
 
 import (
-	asyncapierr "github.com/asyncapi/converter-go/pkg/error"
-
 	"fmt"
 	"io"
 	"regexp"
 	"strings"
+
+	asyncapierr "github.com/asyncapi/converter-go/pkg/error"
 )
 
 // AsyncapiVersion is the AsyncAPI version that the document will be converted to.
-const AsyncapiVersion = "2.0.0-rc1"
+const AsyncapiVersion = "2.0.0-rc2"
 
 // Decode reads an AsyncAPI document from input and stores it in the value.
 type Decode = func(interface{}, io.Reader) error
@@ -57,6 +57,7 @@ func (c *converter) Convert(reader io.Reader, writer io.Writer) error {
 		c.updateVersion,
 		c.updateServers,
 		c.createChannels,
+		c.alterChannels,
 		c.cleanup,
 		c.buildEncodeFunction(writer),
 	}
@@ -102,6 +103,7 @@ func (c *converter) updateID() error {
 		c.data["id"] = *c.id
 		return nil
 	}
+
 	info, ok := c.data["info"].(map[string]interface{})
 	if !ok {
 		return asyncapierr.NewInvalidProperty("info")
@@ -121,9 +123,11 @@ func (c *converter) updateVersion() error {
 
 func (c *converter) updateServers() error {
 	servers, ok := c.data["servers"].([]interface{})
+
 	if !ok {
 		return nil
 	}
+
 	_, containsSecurity := c.data["security"]
 	for _, item := range servers {
 		server, ok := item.(map[string]interface{})
@@ -140,6 +144,23 @@ func (c *converter) updateServers() error {
 			delete(server, "schemeVersion")
 		}
 	}
+
+	var mappedServers = make(map[string]interface{})
+
+	for index, item := range servers {
+		//done same way as in https://github.com/asyncapi/converter/blob/020946e745342a6751565406e156c499859f5763/lib/index.js#L106
+		if index == 0 {
+
+			mappedServers["default"] = item
+		} else {
+
+			mappedServers[fmt.Sprintf("server%d", index)] = item
+		}
+	}
+
+	// is there possibility for this operation to crash?
+	c.data["servers"] = mappedServers
+
 	return nil
 }
 
@@ -184,6 +205,9 @@ func (c *converter) channelsFromStream() error {
 		return asyncapierr.NewInvalidProperty("events")
 	}
 	channel := make(map[string]interface{})
+
+	// is that the logic I am supposed to alter?
+	// and in similar places
 	if _, ok := events["read"]; ok {
 		channel["publish"] = map[string]map[string]interface{}{
 			"message": {
@@ -252,12 +276,100 @@ func (c *converter) createChannels() error {
 	return asyncapierr.NewInvalidProperty("missing one of topics/stream/events")
 }
 
+func (c *converter) alterChannels() error {
+	channels, ok := c.data["channels"].(map[string]interface{})
+
+	if !ok {
+		return asyncapierr.NewInvalidProperty("missing channels")
+	}
+
+	for key, item := range channels {
+		channel, ok := item.(map[string]interface{})
+		if !ok {
+			return asyncapierr.NewInvalidProperty("malformed channel")
+		}
+
+		if params, ok := channel["parameters"].([]interface{}); ok {
+			paramsMap := make(map[string]interface{})
+			re := regexp.MustCompile(`{([^}]+)}`)
+			var paramNames []string
+
+			for _, part := range re.FindAll([]byte(key), -1) {
+				paramNames = append(paramNames, string(part))
+			}
+
+			for index, paramI := range params {
+
+				param, ok := paramI.(map[string]interface{})
+
+				if !ok {
+					return asyncapierr.NewInvalidProperty("malformed parameter of channel")
+				}
+
+				name := "default"
+
+				if paramName, ok := param["name"].(string); ok {
+					name = paramName
+				} else {
+					if len(paramNames) > index {
+						name = paramNames[index]
+					}
+				}
+				name = strings.TrimPrefix(name, "{")
+				name = strings.TrimSuffix(name, "}")
+
+				if _, ok := param["name"]; ok {
+					delete(param, "name")
+				}
+				paramsMap[name] = param
+
+			}
+			channel["parameters"] = paramsMap
+		}
+		//TODO separate ^ and below into functions
+
+		if publish, ok := channel["publish"].(map[string]interface{}); ok {
+			alterOperation(publish)
+		}
+		if subscribe, ok := channel["subscribe"].(map[string]interface{}); ok {
+			alterOperation(subscribe)
+		}
+
+	}
+
+	return nil
+}
+
+func alterOperation(publish map[string]interface{}) {
+	if message, ok := publish["message"].(map[string]interface{}); ok {
+		if oneOf, ok := message["oneOf"].([]map[string]interface{}); ok {
+			for _, elem := range oneOf {
+				if protocolInfo, ok := elem["protocolInfo"]; ok {
+					elem["bindings"] = protocolInfo
+
+				}
+				// https://github.com/asyncapi/converter/blob/020946e745/lib/index.js#L163
+				//if headers, ok := elem["headers"]; ok {
+				//
+				//}
+
+			}
+		} else {
+			if protocolInfo, ok := message["protocolInfo"]; ok {
+				message["bindings"] = protocolInfo
+				delete(message, "protocolInfo")
+			}
+		}
+
+	}
+}
+
 func extractID(value string) string {
 	title := strings.ToLower(value)
 	return strings.Join(strings.Split(title, " "), ".")
 }
 
-var versionRegexp = regexp.MustCompile("^1\\.[0-2].0$")
+var versionRegexp = regexp.MustCompile("^1\\.[0-2]\\.0$")
 
 func (c *converter) verifyAsyncapiVersion() error {
 	version, ok := c.data["asyncapi"]
