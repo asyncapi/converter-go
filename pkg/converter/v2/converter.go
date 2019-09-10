@@ -112,6 +112,8 @@ func (c *converter) updateID() error {
 	if !ok {
 		return asyncapierr.NewInvalidProperty("title")
 	}
+
+	// TODO id is not longer required, so handle it properly
 	c.data["id"] = fmt.Sprintf(`urn:%s`, extractID(fmt.Sprintf("%v", title)))
 	return nil
 }
@@ -315,50 +317,58 @@ func (c *converter) alterChannels() error {
 						name = paramNames[index]
 					}
 				}
-				name = strings.TrimPrefix(name, "{")
-				name = strings.TrimSuffix(name, "}")
 
+				name = name[1 : len(name)-1]
+
+				// TODO at this point there's only $ref here, we need to delete it later
 				if _, ok := param["name"]; ok {
 					delete(param, "name")
 				}
+
 				paramsMap[name] = param
 
 			}
 			channel["parameters"] = paramsMap
 		}
 		//TODO separate ^ and below into functions
-
+		// TODO fix ./asyncapi_converter ./exam/street.yaml 2>&1 | node  ~/Desktop/test-parser-output/index.js
 		if publish, ok := channel["publish"].(map[string]interface{}); ok {
 			alterOperation(publish)
+			protocolInfoToBindings(publish)
 		}
 		if subscribe, ok := channel["subscribe"].(map[string]interface{}); ok {
 			alterOperation(subscribe)
+			protocolInfoToBindings(subscribe)
 		}
 
-	}
+		protocolInfoToBindings(channel)
 
+	}
 	return nil
 }
 
-func alterOperation(publish map[string]interface{}) {
-	if message, ok := publish["message"].(map[string]interface{}); ok {
+func protocolInfoToBindings(arg map[string]interface{}) {
+
+	if protocolInfo, ok := arg["protocolInfo"]; ok {
+		arg["bindings"] = protocolInfo
+		delete(arg, "protocolInfo")
+	}
+
+}
+
+func alterOperation(operation map[string]interface{}) {
+	if message, ok := operation["message"].(map[string]interface{}); ok {
 		if oneOf, ok := message["oneOf"].([]map[string]interface{}); ok {
 			for _, elem := range oneOf {
-				if protocolInfo, ok := elem["protocolInfo"]; ok {
-					elem["bindings"] = protocolInfo
-
-				}
+				protocolInfoToBindings(elem)
+				// waiting for fran to answer whether this is bug or some kind of leftover
 				// https://github.com/asyncapi/converter/blob/020946e745/lib/index.js#L163
-				//if headers, ok := elem["headers"]; ok {
+				// if headers, ok := elem["headers"]; ok {
 				//
-				//}
-
+				// }
 			}
 		} else {
-			if protocolInfo, ok := message["protocolInfo"]; ok {
-				message["bindings"] = protocolInfo
-				delete(message, "protocolInfo")
-			}
+			protocolInfoToBindings(message)
 		}
 
 	}
