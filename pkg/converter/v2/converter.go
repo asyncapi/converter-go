@@ -392,11 +392,6 @@ func alterOperation(operation map[string]interface{}) {
 	}
 }
 
-func extractID(value string) string {
-	title := strings.ToLower(value)
-	return strings.Join(strings.Split(title, " "), ".")
-}
-
 var versionRegexp = regexp.MustCompile("^1\\.[0-2]\\.0$")
 
 func (c *converter) verifyAsyncapiVersion() error {

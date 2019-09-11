@@ -102,22 +102,22 @@ func TestNewConverter(t *testing.T) {
 		},
 		{
 			inputFilePath:    "./testdata/input/gitter-streaming1.2.0.json",
-			expectedFilePath: "./testdata/output/gitter-streaming.yml",
+			expectedFilePath: "./testdata/output/gitter-streaming.yaml",
 		},
 		{
 			inputFilePath:    "./testdata/input/gitter-streaming1.2.0_modified_write.json",
-			expectedFilePath: "./testdata/output/gitter-streaming_modified_write.yml",
+			expectedFilePath: "./testdata/output/gitter-streaming_modified_write.yaml",
 		},
 		{
 			inputFilePath:    "./testdata/input/gitter-streaming1.2.0_with_id_option.json",
-			expectedFilePath: "./testdata/output/gitter-streaming_with_id_option.yml",
+			expectedFilePath: "./testdata/output/gitter-streaming_with_id_option.yaml",
 			options: []ConverterOption{
 				WithID(&testID),
 			},
 		},
 		{
 			inputFilePath:    "./testdata/input/slack-rtm1.2.0.json",
-			expectedFilePath: "./testdata/output/slack-rtm.yml",
+			expectedFilePath: "./testdata/output/slack-rtm.yaml",
 		},
 		{
 			inputFilePath:    "./testdata/input/streetlights1.0.0_no_base_topic.json",
