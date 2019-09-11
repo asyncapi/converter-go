@@ -147,18 +147,18 @@ func TestNewYamlConverter(t *testing.T) {
 			inputFilePath:    "./testdata/input/streetlights1.0.0.yaml",
 			expectedFilePath: "./testdata/output/streetlights.yaml",
 		},
-		//{
-		//	inputFilePath:    "./testdata/input/streetlights1.1.0.yaml",
-		//	expectedFilePath: "./testdata/output/streetlights.yaml",
-		//},
-		//{
-		//	inputFilePath:    "./testdata/input/streetlights1.2.0.yaml",
-		//	expectedFilePath: "./testdata/output/streetlights.yaml",
-		//},
-		//{
-		//	inputFilePath:    "./testdata/input/slack-rtm1.2.0.yaml",
-		//	expectedFilePath: "./testdata/output/slack-rtm.yml",
-		//},
+		{
+			inputFilePath:    "./testdata/input/streetlights1.1.0.yaml",
+			expectedFilePath: "./testdata/output/streetlights.yaml",
+		},
+		{
+			inputFilePath:    "./testdata/input/streetlights1.2.0.yaml",
+			expectedFilePath: "./testdata/output/streetlights.yaml",
+		},
+		{
+			inputFilePath:    "./testdata/input/slack-rtm1.2.0.yaml",
+			expectedFilePath: "./testdata/output/slack-rtm.yaml",
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
