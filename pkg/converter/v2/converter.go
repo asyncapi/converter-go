@@ -268,6 +268,9 @@ func prt(arg ...interface{}) {
 }
 
 func (c *converter) updateComponents() error {
+
+	// todo remove components/traits
+
 	components, ok := c.data["components"].(map[string]interface{})
 
 	if !ok {
