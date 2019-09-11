@@ -105,18 +105,6 @@ func (c *converter) updateID() error {
 		c.data["id"] = *c.id
 		return nil
 	}
-
-	info, ok := c.data["info"].(map[string]interface{})
-	if !ok {
-		return asyncapierr.NewInvalidProperty("info")
-	}
-	title, ok := info["title"]
-	if !ok {
-		return asyncapierr.NewInvalidProperty("title")
-	}
-
-	// TODO id is not longer required, so handle it properly
-	c.data["id"] = fmt.Sprintf(`urn:%s`, extractID(fmt.Sprintf("%v", title)))
 	return nil
 }
 
