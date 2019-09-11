@@ -152,15 +152,12 @@ func (c *converter) updateServers() error {
 	for index, item := range servers {
 		//done same way as in https://github.com/asyncapi/converter/blob/020946e745342a6751565406e156c499859f5763/lib/index.js#L106
 		if index == 0 {
-
 			mappedServers["default"] = item
 		} else {
-
 			mappedServers[fmt.Sprintf("server%d", index)] = item
 		}
 	}
 
-	// is there possibility for this operation to crash?
 	c.data["servers"] = mappedServers
 
 	return nil
@@ -330,7 +327,7 @@ func (c *converter) alterChannels() error {
 			}
 			channel["parameters"] = paramsMap
 		}
-		//TODO separate ^ and below into functions
+		// TODO separate ^ and below into functions
 		// TODO fix ./asyncapi_converter ./exam/street.yaml 2>&1 | node  ~/Desktop/test-parser-output/index.js
 		if publish, ok := channel["publish"].(map[string]interface{}); ok {
 			alterOperation(publish)
@@ -340,20 +337,25 @@ func (c *converter) alterChannels() error {
 			alterOperation(subscribe)
 			protocolInfoToBindings(subscribe)
 		}
-
 		protocolInfoToBindings(channel)
-
 	}
 	return nil
 }
 
 func protocolInfoToBindings(arg map[string]interface{}) {
-
 	if protocolInfo, ok := arg["protocolInfo"]; ok {
 		arg["bindings"] = protocolInfo
 		delete(arg, "protocolInfo")
 	}
+}
 
+func headersToSchema(arg map[string]interface{}) {
+	if headers, ok := arg["headers"]; ok {
+		headers = map[string]interface{}{
+			"type":       "object",
+			"properties": headers,
+		}
+	}
 }
 
 func alterOperation(operation map[string]interface{}) {
@@ -361,16 +363,12 @@ func alterOperation(operation map[string]interface{}) {
 		if oneOf, ok := message["oneOf"].([]map[string]interface{}); ok {
 			for _, elem := range oneOf {
 				protocolInfoToBindings(elem)
-				// waiting for fran to answer whether this is bug or some kind of leftover
-				// https://github.com/asyncapi/converter/blob/020946e745/lib/index.js#L163
-				// if headers, ok := elem["headers"]; ok {
-				//
-				// }
+				headersToSchema(elem)
 			}
 		} else {
 			protocolInfoToBindings(message)
+			headersToSchema(message)
 		}
-
 	}
 }
 
