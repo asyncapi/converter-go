@@ -147,18 +147,18 @@ func TestNewYamlConverter(t *testing.T) {
 			inputFilePath:    "./testdata/input/streetlights1.0.0.yaml",
 			expectedFilePath: "./testdata/output/streetlights.yaml",
 		},
-		{
-			inputFilePath:    "./testdata/input/streetlights1.1.0.yaml",
-			expectedFilePath: "./testdata/output/streetlights.yaml",
-		},
-		{
-			inputFilePath:    "./testdata/input/streetlights1.2.0.yaml",
-			expectedFilePath: "./testdata/output/streetlights.yaml",
-		},
-		{
-			inputFilePath:    "./testdata/input/slack-rtm1.2.0.yaml",
-			expectedFilePath: "./testdata/output/slack-rtm.yml",
-		},
+		//{
+		//	inputFilePath:    "./testdata/input/streetlights1.1.0.yaml",
+		//	expectedFilePath: "./testdata/output/streetlights.yaml",
+		//},
+		//{
+		//	inputFilePath:    "./testdata/input/streetlights1.2.0.yaml",
+		//	expectedFilePath: "./testdata/output/streetlights.yaml",
+		//},
+		//{
+		//	inputFilePath:    "./testdata/input/slack-rtm1.2.0.yaml",
+		//	expectedFilePath: "./testdata/output/slack-rtm.yml",
+		//},
 	}
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
@@ -187,16 +187,10 @@ func TestConverter_Do_Invalid(t *testing.T) {
 			inputFilePath: "./testdata/input/invalid/gitter-streaming1.2.0_invalid_version.json",
 		},
 		{
+			inputFilePath: "./testdata/input/invalid/streetlights1.0.0_invalid1.json",
+		},
+		{
 			inputFilePath: "./testdata/input/invalid/streetlights1.0.0_invalid2.json",
-		},
-		{
-			inputFilePath: "./testdata/input/invalid/streetlights1.0.0_invalid3.json",
-		},
-		{
-			inputFilePath: "./testdata/input/invalid/streetlights1.0.0_invalid4.json",
-		},
-		{
-			inputFilePath: "./testdata/input/invalid/streetlights1.0.0_invalid5.json",
 		},
 		{
 			inputFilePath: "./testdata/input/invalid/slack-rtm1.2.0_invalid1.json",

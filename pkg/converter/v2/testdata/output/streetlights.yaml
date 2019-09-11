@@ -1,26 +1,30 @@
-asyncapi: 2.0.0-rc1
+asyncapi: 2.0.0-rc2
 channels:
   smartylighting/streetlights/1/0/action/{streetlightId}/dim:
     parameters:
-      - $ref: '#/components/parameters/streetlightId'
+      streetlightId:
+        $ref: '#/components/parameters/streetlightId'
     subscribe:
       message:
         $ref: '#/components/messages/dimLight'
   smartylighting/streetlights/1/0/action/{streetlightId}/turn/off:
     parameters:
-      - $ref: '#/components/parameters/streetlightId'
+      streetlightId:
+        $ref: '#/components/parameters/streetlightId'
     subscribe:
       message:
         $ref: '#/components/messages/turnOnOff'
   smartylighting/streetlights/1/0/action/{streetlightId}/turn/on:
     parameters:
-      - $ref: '#/components/parameters/streetlightId'
+      streetlightId:
+        $ref: '#/components/parameters/streetlightId'
     subscribe:
       message:
         $ref: '#/components/messages/turnOnOff'
   smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured:
     parameters:
-      - $ref: '#/components/parameters/streetlightId'
+      streetlightId:
+        $ref: '#/components/parameters/streetlightId'
     publish:
       message:
         $ref: '#/components/messages/lightMeasured'
@@ -42,7 +46,6 @@ components:
   parameters:
     streetlightId:
       description: The ID of the streetlight.
-      name: streetlightId
       schema:
         type: string
   schemas:
@@ -97,7 +100,8 @@ info:
   title: Streetlights API
   version: 1.0.0
 servers:
-  - description: Test broker
+  default:
+    description: Test broker
     protocol: mqtt
     security:
       - apiKey: []

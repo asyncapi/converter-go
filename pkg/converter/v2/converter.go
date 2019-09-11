@@ -194,9 +194,7 @@ func (c *converter) channelsFromStream() error {
 		return asyncapierr.NewInvalidProperty("events")
 	}
 	channel := make(map[string]interface{})
-
-	// is that the logic I am supposed to alter?
-	// and in similar places
+	
 	if _, ok := events["read"]; ok {
 		channel["publish"] = map[string]map[string]interface{}{
 			"message": {
