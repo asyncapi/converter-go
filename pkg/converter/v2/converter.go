@@ -3,6 +3,7 @@ package v2
 import (
 	"fmt"
 	"io"
+	"os"
 	"regexp"
 	"strings"
 
@@ -58,6 +59,7 @@ func (c *converter) Convert(reader io.Reader, writer io.Writer) error {
 		c.updateServers,
 		c.createChannels,
 		c.alterChannels,
+		c.updateComponents,
 		c.cleanup,
 		c.buildEncodeFunction(writer),
 	}
@@ -275,6 +277,70 @@ func (c *converter) createChannels() error {
 	return asyncapierr.NewInvalidProperty("missing one of topics/stream/events")
 }
 
+func prt(arg ...interface{}) {
+	fmt.Fprintf(os.Stdout, "%v\n\n", arg)
+}
+
+func (c *converter) updateComponents() error {
+	components, ok := c.data["components"].(map[string]interface{})
+
+	if !ok {
+		return nil
+	}
+
+	parameters, ok := components["parameters"].(map[string]interface{})
+
+	if !ok {
+		return nil
+	}
+
+	for _, rawParam := range parameters {
+		if param, ok := rawParam.(map[string]interface{}); ok {
+			delete(param, "name")
+			rawParam = param
+		}
+	}
+	return nil
+}
+
+func alterParameters(parameters []interface{}, key string) (map[string]interface{}, error) {
+	paramsMap := make(map[string]interface{})
+	re := regexp.MustCompile(`{([^}]+)}`)
+	var paramNames []string
+
+	for _, part := range re.FindAll([]byte(key), -1) {
+		paramNames = append(paramNames, string(part))
+	}
+
+	for index, paramI := range parameters {
+
+		param, ok := paramI.(map[string]interface{})
+
+		if !ok {
+			return nil, asyncapierr.NewInvalidProperty("malformed parameter")
+		}
+
+		name := "default"
+
+		if paramName, ok := param["name"].(string); ok {
+			name = paramName
+		} else {
+			if len(paramNames) > index {
+				name = paramNames[index]
+			}
+		}
+		name = strings.TrimLeft(strings.TrimRight(name, "}"), "{")
+
+		if param["name"] != nil {
+			delete(param, "name")
+		}
+
+		paramsMap[name] = param
+
+	}
+	return paramsMap, nil
+}
+
 func (c *converter) alterChannels() error {
 	channels, ok := c.data["channels"].(map[string]interface{})
 
@@ -289,46 +355,14 @@ func (c *converter) alterChannels() error {
 		}
 
 		if params, ok := channel["parameters"].([]interface{}); ok {
-			paramsMap := make(map[string]interface{})
-			re := regexp.MustCompile(`{([^}]+)}`)
-			var paramNames []string
 
-			for _, part := range re.FindAll([]byte(key), -1) {
-				paramNames = append(paramNames, string(part))
+			altered, err := alterParameters(params, key)
+			if err != nil {
+				return err
 			}
-
-			for index, paramI := range params {
-
-				param, ok := paramI.(map[string]interface{})
-
-				if !ok {
-					return asyncapierr.NewInvalidProperty("malformed parameter of channel")
-				}
-
-				name := "default"
-
-				if paramName, ok := param["name"].(string); ok {
-					name = paramName
-				} else {
-					if len(paramNames) > index {
-						name = paramNames[index]
-					}
-				}
-
-				name = name[1 : len(name)-1]
-
-				// TODO at this point there's only $ref here, we need to delete it later
-				if _, ok := param["name"]; ok {
-					delete(param, "name")
-				}
-
-				paramsMap[name] = param
-
-			}
-			channel["parameters"] = paramsMap
+			channel["parameters"] = altered
 		}
-		// TODO separate ^ and below into functions
-		// TODO fix ./asyncapi_converter ./exam/street.yaml 2>&1 | node  ~/Desktop/test-parser-output/index.js
+
 		if publish, ok := channel["publish"].(map[string]interface{}); ok {
 			alterOperation(publish)
 			protocolInfoToBindings(publish)
