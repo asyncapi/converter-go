@@ -160,17 +160,25 @@ func (c *converter) channelsFromTopics() error {
 		return asyncapierr.NewInvalidProperty("topics")
 	}
 	for key, value := range topics {
-		var topic string
+		//prt(value)
+
+		var topicName string
 		if _, ok := c.data["baseTopic"]; ok {
-			topic = fmt.Sprintf("%v", c.data["baseTopic"])
+			topicName = fmt.Sprintf("%v", c.data["baseTopic"])
 		}
-		if topic != "" {
-			topic = fmt.Sprintf(`%s/%s`, topic, key)
+		if topicName != "" {
+			topicName = fmt.Sprintf(`%s/%s`, topicName, key)
 		} else {
-			topic = fmt.Sprintf("%v", key)
+			topicName = fmt.Sprintf("%v", key)
 		}
-		channelKey := strings.ReplaceAll(topic, ".", "/")
+		channelKey := strings.ReplaceAll(topicName, ".", "/")
 		if topic, ok := value.(map[string]interface{}); ok {
+
+			publish := topic["publish"]
+			sub := topic["subscribe"]
+
+			sub, publish = publish, sub
+
 			switch {
 			case topic["publish"] != nil:
 				topic["publish"] = map[string]interface{}{
@@ -189,23 +197,23 @@ func (c *converter) channelsFromTopics() error {
 }
 
 func (c *converter) channelsFromStream() error {
-	events, ok := c.data["stream"].(map[string]interface{})
+	stream, ok := c.data["stream"].(map[string]interface{})
 	if !ok {
 		return asyncapierr.NewInvalidProperty("events")
 	}
 	channel := make(map[string]interface{})
-	
-	if _, ok := events["read"]; ok {
-		channel["publish"] = map[string]map[string]interface{}{
+
+	if _, ok := stream["read"]; ok {
+		channel["subscribe"] = map[string]map[string]interface{}{
 			"message": {
-				"oneOf": events["read"],
+				"oneOf": stream["read"],
 			},
 		}
 	}
-	if _, ok := events["write"]; ok {
-		channel["subscribe"] = map[string]map[string]interface{}{
+	if _, ok := stream["write"]; ok {
+		channel["publish"] = map[string]map[string]interface{}{
 			"message": {
-				"oneOf": events["write"],
+				"oneOf": stream["write"],
 			},
 		}
 	}
@@ -216,22 +224,22 @@ func (c *converter) channelsFromStream() error {
 }
 
 func (c *converter) channelsFromEvents() error {
-	stream, ok := c.data["events"].(map[string]interface{})
+	events, ok := c.data["events"].(map[string]interface{})
 	if !ok {
 		return asyncapierr.NewInvalidProperty("stream")
 	}
 	channel := make(map[string]interface{})
-	if _, ok := stream["receive"]; ok {
-		channel["publish"] = map[string]map[string]interface{}{
+	if _, ok := events["receive"]; ok {
+		channel["subscribe"] = map[string]map[string]interface{}{
 			"message": {
-				"oneOf": stream["receive"],
+				"oneOf": events["receive"],
 			},
 		}
 	}
-	if _, ok := stream["send"]; ok {
-		channel["subscribe"] = map[string]map[string]interface{}{
+	if _, ok := events["send"]; ok {
+		channel["publish"] = map[string]map[string]interface{}{
 			"message": {
-				"oneOf": stream["send"],
+				"oneOf": events["send"],
 			},
 		}
 	}
@@ -268,9 +276,6 @@ func prt(arg ...interface{}) {
 }
 
 func (c *converter) updateComponents() error {
-
-	// todo remove components/traits
-
 	components, ok := c.data["components"].(map[string]interface{})
 
 	if !ok {
