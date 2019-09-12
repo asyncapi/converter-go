@@ -352,22 +352,15 @@ func (c *converter) alterChannels() error {
 
 		if publish, ok := channel["publish"].(map[string]interface{}); ok {
 			alterOperation(publish)
-			protocolInfoToBindings(publish)
+
 		}
 		if subscribe, ok := channel["subscribe"].(map[string]interface{}); ok {
 			alterOperation(subscribe)
-			protocolInfoToBindings(subscribe)
+
 		}
-		protocolInfoToBindings(channel)
+
 	}
 	return nil
-}
-
-func protocolInfoToBindings(arg map[string]interface{}) {
-	if protocolInfo, ok := arg["protocolInfo"]; ok {
-		arg["bindings"] = protocolInfo
-		delete(arg, "protocolInfo")
-	}
 }
 
 func headersToSchema(arg map[string]interface{}) {
@@ -383,11 +376,9 @@ func alterOperation(operation map[string]interface{}) {
 	if message, ok := operation["message"].(map[string]interface{}); ok {
 		if oneOf, ok := message["oneOf"].([]map[string]interface{}); ok {
 			for _, elem := range oneOf {
-				protocolInfoToBindings(elem)
 				headersToSchema(elem)
 			}
 		} else {
-			protocolInfoToBindings(message)
 			headersToSchema(message)
 		}
 	}
