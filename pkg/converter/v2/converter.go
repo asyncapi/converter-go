@@ -170,12 +170,6 @@ func (c *converter) channelsFromTopics() error {
 		}
 		channelKey := strings.ReplaceAll(topicName, ".", "/")
 		if topic, ok := value.(map[string]interface{}); ok {
-
-			publish := topic["publish"]
-			sub := topic["subscribe"]
-
-			sub, publish = publish, sub
-
 			switch {
 			case topic["publish"] != nil:
 				topic["publish"] = map[string]interface{}{
@@ -269,6 +263,7 @@ func (c *converter) createChannels() error {
 }
 
 func (c *converter) updateComponents() error {
+
 	components, ok := c.data["components"].(map[string]interface{})
 
 	if !ok {
@@ -277,16 +272,26 @@ func (c *converter) updateComponents() error {
 
 	parameters, ok := components["parameters"].(map[string]interface{})
 
-	if !ok {
-		return nil
-	}
-
-	for _, rawParam := range parameters {
-		if param, ok := rawParam.(map[string]interface{}); ok {
-			delete(param, "name")
-			rawParam = param
+	if ok {
+		for _, rawParam := range parameters {
+			if param, ok := rawParam.(map[string]interface{}); ok {
+				delete(param, "name")
+				rawParam = param
+			}
 		}
 	}
+
+	messages, ok := components["messages"].(map[string]interface{})
+
+	if ok {
+		for _, messageRaw := range messages {
+			if message, ok := messageRaw.(map[string]interface{}); ok {
+				headersToSchema(message)
+			}
+
+		}
+	}
+
 	return nil
 }
 
@@ -352,22 +357,20 @@ func (c *converter) alterChannels() error {
 
 		if publish, ok := channel["publish"].(map[string]interface{}); ok {
 			alterOperation(publish)
-
 		}
+
 		if subscribe, ok := channel["subscribe"].(map[string]interface{}); ok {
 			alterOperation(subscribe)
-
 		}
-
 	}
 	return nil
 }
 
 func headersToSchema(arg map[string]interface{}) {
-	if headers, ok := arg["headers"]; ok {
-		headers = map[string]interface{}{
+	if arg["headers"] != nil {
+		arg["headers"] = map[string]interface{}{
 			"type":       "object",
-			"properties": headers,
+			"properties": arg["headers"],
 		}
 	}
 }
