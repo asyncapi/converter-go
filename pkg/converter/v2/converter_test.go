@@ -55,6 +55,10 @@ func TestNewJsonConverter(t *testing.T) {
 			inputFilePath:    "./testdata/input/streetlights1.0.0_no_base_topic.json",
 			expectedFilePath: "./testdata/output/streetlights_no_base_topic.json",
 		},
+		{
+			inputFilePath:    "./testdata/input/gitter-streaming1.2.0_more_servers.json",
+			expectedFilePath: "./testdata/output/gitter-streaming_more_servers.json",
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
