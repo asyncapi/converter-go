@@ -3,7 +3,6 @@ package v2
 import (
 	"fmt"
 	"io"
-	"os"
 	"regexp"
 	"strings"
 
@@ -160,8 +159,6 @@ func (c *converter) channelsFromTopics() error {
 		return asyncapierr.NewInvalidProperty("topics")
 	}
 	for key, value := range topics {
-		//prt(value)
-
 		var topicName string
 		if _, ok := c.data["baseTopic"]; ok {
 			topicName = fmt.Sprintf("%v", c.data["baseTopic"])
@@ -269,10 +266,6 @@ func (c *converter) createChannels() error {
 		return c.channelsFromEvents()
 	}
 	return asyncapierr.NewInvalidProperty("missing one of topics/stream/events")
-}
-
-func prt(arg ...interface{}) {
-	fmt.Fprintf(os.Stdout, "%v\n\n", arg)
 }
 
 func (c *converter) updateComponents() error {

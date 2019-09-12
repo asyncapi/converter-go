@@ -4,6 +4,10 @@ channels:
         publish:
             message:
                 oneOf:
+                  - $ref: '#/components/messages/outgoingMessage'
+        subscribe:
+            message:
+                oneOf:
                   - $ref: '#/components/messages/hello'
                   - $ref: '#/components/messages/connectionError'
                   - $ref: '#/components/messages/accountsChanged'
@@ -50,10 +54,6 @@ channels:
                   - $ref: '#/components/messages/manualPresenceChange'
                   - $ref: '#/components/messages/memberJoinedChannel'
                   - $ref: '#/components/messages/message'
-        subscribe:
-            message:
-                oneOf:
-                  - $ref: '#/components/messages/outgoingMessage'
 components:
     messages:
         accountsChanged:
