@@ -191,6 +191,20 @@ func (c *converter) channelsFromTopics() error {
 	return nil
 }
 
+func fillChannelMessage(channel *map[string]interface{}, slice []interface{}, operation string) {
+	if len(slice) == 1 {
+		(*channel)[operation] = map[string]interface{}{
+			"message": slice[0],
+		}
+	} else {
+		(*channel)[operation] = map[string]map[string]interface{}{
+			"message": {
+				"oneOf": slice,
+			},
+		}
+	}
+}
+
 func (c *converter) channelsFromStream() error {
 	stream, ok := c.data["stream"].(map[string]interface{})
 	if !ok {
@@ -199,31 +213,11 @@ func (c *converter) channelsFromStream() error {
 	channel := make(map[string]interface{})
 
 	if readSlice, ok := stream["read"].([]interface{}); ok {
-		if len(readSlice) == 1 {
-			channel["subscribe"] = map[string]interface{}{
-				"message": readSlice[0],
-			}
-		} else {
-			channel["subscribe"] = map[string]map[string]interface{}{
-				"message": {
-					"oneOf": stream["read"],
-				},
-			}
-		}
-
+		fillChannelMessage(&channel, readSlice, "subscribe")
 	}
-	if writeSlice, ok := stream["write"].([]interface{}); ok {
-		if len(writeSlice) == 1 {
-			channel["publish"] = map[string]interface{}{
-				"message": writeSlice[0],
-			}
-		} else {
-			channel["publish"] = map[string]map[string]interface{}{
-				"message": {
-					"oneOf": stream["write"],
-				},
-			}
-		}
+
+	if streamWrite, ok := stream["write"].([]interface{}); ok {
+		fillChannelMessage(&channel, streamWrite, "publish")
 	}
 	c.data["channels"] = map[string]interface{}{
 		"/": channel,
@@ -237,31 +231,12 @@ func (c *converter) channelsFromEvents() error {
 		return asyncapierr.NewInvalidProperty("events")
 	}
 	channel := make(map[string]interface{})
-	if receiveSlice, ok := events["receive"].([]interface{}); ok {
-		if len(receiveSlice) == 1 {
-			channel["publish"] = map[string]interface{}{
-				"message": receiveSlice[0],
-			}
-		} else {
-			channel["subscribe"] = map[string]map[string]interface{}{
-				"message": {
-					"oneOf": events["receive"],
-				},
-			}
-		}
+	if eventsReceive, ok := events["receive"].([]interface{}); ok {
+		fillChannelMessage(&channel, eventsReceive, "subscribe")
 	}
-	if sendSlice, ok := events["send"].([]interface{}); ok {
-		if len(sendSlice) == 1 {
-			channel["publish"] = map[string]interface{}{
-				"message": sendSlice[0],
-			}
-		} else {
-			channel["publish"] = map[string]map[string]interface{}{
-				"message": {
-					"oneOf": events["send"],
-				},
-			}
-		}
+	if eventsSend, ok := events["send"].([]interface{}); ok {
+		fillChannelMessage(&channel, eventsSend, "publish")
+
 	}
 	c.data["channels"] = map[string]interface{}{
 		"/": channel,
