@@ -212,8 +212,8 @@ func (c *converter) channelsFromStream() error {
 	}
 	channel := make(map[string]interface{})
 
-	if readSlice, ok := stream["read"].([]interface{}); ok {
-		fillChannelMessage(&channel, readSlice, "subscribe")
+	if streamRead, ok := stream["read"].([]interface{}); ok {
+		fillChannelMessage(&channel, streamRead, "subscribe")
 	}
 
 	if streamWrite, ok := stream["write"].([]interface{}); ok {
