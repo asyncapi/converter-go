@@ -1,5 +1,5 @@
 # AsyncAPI Converter Examples
 
-## Overview 
+## Overview
 
 This directory contains examples of how to use the AsyncAPI Converter as a package.

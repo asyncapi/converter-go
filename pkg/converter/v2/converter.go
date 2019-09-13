@@ -12,6 +12,8 @@ import (
 // AsyncapiVersion is the AsyncAPI version that the document will be converted to.
 const AsyncapiVersion = "2.0.0"
 
+var versionRegexp = regexp.MustCompile("^1\\.[0-2]\\.0$")
+
 // Decode reads an AsyncAPI document from input and stores it in the value.
 type Decode = func(interface{}, io.Reader) error
 
@@ -168,7 +170,9 @@ func (c *converter) channelsFromTopics() error {
 		} else {
 			topicName = fmt.Sprintf("%v", key)
 		}
+
 		channelKey := strings.ReplaceAll(topicName, ".", "/")
+
 		if topic, ok := value.(map[string]interface{}); ok {
 			switch {
 			case topic["publish"] != nil:
@@ -190,7 +194,7 @@ func (c *converter) channelsFromTopics() error {
 func (c *converter) channelsFromStream() error {
 	stream, ok := c.data["stream"].(map[string]interface{})
 	if !ok {
-		return asyncapierr.NewInvalidProperty("events")
+		return asyncapierr.NewInvalidProperty("stream")
 	}
 	channel := make(map[string]interface{})
 
@@ -217,7 +221,7 @@ func (c *converter) channelsFromStream() error {
 func (c *converter) channelsFromEvents() error {
 	events, ok := c.data["events"].(map[string]interface{})
 	if !ok {
-		return asyncapierr.NewInvalidProperty("stream")
+		return asyncapierr.NewInvalidProperty("events")
 	}
 	channel := make(map[string]interface{})
 	if _, ok := events["receive"]; ok {
@@ -263,9 +267,7 @@ func (c *converter) createChannels() error {
 }
 
 func (c *converter) updateComponents() error {
-
 	components, ok := c.data["components"].(map[string]interface{})
-
 	if !ok {
 		return nil
 	}
@@ -291,7 +293,6 @@ func (c *converter) updateComponents() error {
 
 		}
 	}
-
 	return nil
 }
 
@@ -335,7 +336,6 @@ func alterParameters(parameters []interface{}, key string) (map[string]interface
 
 func (c *converter) alterChannels() error {
 	channels, ok := c.data["channels"].(map[string]interface{})
-
 	if !ok {
 		return asyncapierr.NewInvalidProperty("missing channels")
 	}
@@ -348,11 +348,11 @@ func (c *converter) alterChannels() error {
 
 		if params, ok := channel["parameters"].([]interface{}); ok {
 
-			altered, err := alterParameters(params, key)
+			alteredParameters, err := alterParameters(params, key)
 			if err != nil {
 				return err
 			}
-			channel["parameters"] = altered
+			channel["parameters"] = alteredParameters
 		}
 
 		if publish, ok := channel["publish"].(map[string]interface{}); ok {
@@ -386,8 +386,6 @@ func alterOperation(operation map[string]interface{}) {
 		}
 	}
 }
-
-var versionRegexp = regexp.MustCompile("^1\\.[0-2]\\.0$")
 
 func (c *converter) verifyAsyncapiVersion() error {
 	version, ok := c.data["asyncapi"]
