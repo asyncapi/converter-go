@@ -171,6 +171,10 @@ func TestNewYamlConverter(t *testing.T) {
 			inputFilePath:    "./testdata/input/streetlights1.2.0_headers_in_operation.yaml",
 			expectedFilePath: "./testdata/output/streetlights_headers_in_operation.yaml",
 		},
+		{
+			inputFilePath:    "./testdata/input/gitter-streaming1.2.0_one_read_stream.yaml",
+			expectedFilePath: "./testdata/output/gitter-streaming_one_read_stream.yaml",
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.inputFilePath, func(t *testing.T) {
