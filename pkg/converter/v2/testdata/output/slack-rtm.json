@@ -2,6 +2,11 @@
   "asyncapi": "2.0.0",
   "channels": {
     "/": {
+      "publish": {
+        "message": {
+          "$ref": "#/components/messages/outgoingMessage"
+        }
+      },
       "subscribe": {
         "message": {
           "oneOf": [
@@ -142,15 +147,6 @@
             },
             {
               "$ref": "#/components/messages/message"
-            }
-          ]
-        }
-      },
-      "publish": {
-        "message": {
-          "oneOf": [
-            {
-              "$ref": "#/components/messages/outgoingMessage"
             }
           ]
         }

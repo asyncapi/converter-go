@@ -3,8 +3,7 @@ channels:
     /:
         publish:
             message:
-                oneOf:
-                  - $ref: '#/components/messages/outgoingMessage'
+                $ref: '#/components/messages/outgoingMessage'
         subscribe:
             message:
                 oneOf:
