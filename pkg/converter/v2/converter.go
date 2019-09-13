@@ -198,18 +198,31 @@ func (c *converter) channelsFromStream() error {
 	}
 	channel := make(map[string]interface{})
 
-	if _, ok := stream["read"]; ok {
-		channel["subscribe"] = map[string]map[string]interface{}{
-			"message": {
-				"oneOf": stream["read"],
-			},
+	if readSlice, ok := stream["read"].([]interface{}); ok {
+		if len(readSlice) == 1 {
+			channel["subscribe"] = map[string]interface{}{
+				"message": readSlice[0],
+			}
+		} else {
+			channel["subscribe"] = map[string]map[string]interface{}{
+				"message": {
+					"oneOf": stream["read"],
+				},
+			}
 		}
+
 	}
-	if _, ok := stream["write"]; ok {
-		channel["publish"] = map[string]map[string]interface{}{
-			"message": {
-				"oneOf": stream["write"],
-			},
+	if writeSlice, ok := stream["write"].([]interface{}); ok {
+		if len(writeSlice) == 1 {
+			channel["publish"] = map[string]interface{}{
+				"message": writeSlice[0],
+			}
+		} else {
+			channel["publish"] = map[string]map[string]interface{}{
+				"message": {
+					"oneOf": stream["write"],
+				},
+			}
 		}
 	}
 	c.data["channels"] = map[string]interface{}{
@@ -224,18 +237,30 @@ func (c *converter) channelsFromEvents() error {
 		return asyncapierr.NewInvalidProperty("events")
 	}
 	channel := make(map[string]interface{})
-	if _, ok := events["receive"]; ok {
-		channel["subscribe"] = map[string]map[string]interface{}{
-			"message": {
-				"oneOf": events["receive"],
-			},
+	if receiveSlice, ok := events["receive"].([]interface{}); ok {
+		if len(receiveSlice) == 1 {
+			channel["publish"] = map[string]interface{}{
+				"message": receiveSlice[0],
+			}
+		} else {
+			channel["subscribe"] = map[string]map[string]interface{}{
+				"message": {
+					"oneOf": events["receive"],
+				},
+			}
 		}
 	}
-	if _, ok := events["send"]; ok {
-		channel["publish"] = map[string]map[string]interface{}{
-			"message": {
-				"oneOf": events["send"],
-			},
+	if sendSlice, ok := events["send"].([]interface{}); ok {
+		if len(sendSlice) == 1 {
+			channel["publish"] = map[string]interface{}{
+				"message": sendSlice[0],
+			}
+		} else {
+			channel["publish"] = map[string]map[string]interface{}{
+				"message": {
+					"oneOf": events["send"],
+				},
+			}
 		}
 	}
 	c.data["channels"] = map[string]interface{}{
@@ -272,7 +297,23 @@ func (c *converter) updateComponents() error {
 		return nil
 	}
 
-	parameters, ok := components["parameters"].(map[string]interface{})
+	removeNameFromParams(&components)
+
+	messages, ok := components["messages"].(map[string]interface{})
+
+	if ok {
+		for _, messageRaw := range messages {
+			if message, ok := messageRaw.(map[string]interface{}); ok {
+				headersToSchema(&message)
+			}
+
+		}
+	}
+	return nil
+}
+
+func removeNameFromParams(arg *map[string]interface{}) {
+	parameters, ok := (*arg)["parameters"].(map[string]interface{})
 
 	if ok {
 		for _, rawParam := range parameters {
@@ -282,18 +323,6 @@ func (c *converter) updateComponents() error {
 			}
 		}
 	}
-
-	messages, ok := components["messages"].(map[string]interface{})
-
-	if ok {
-		for _, messageRaw := range messages {
-			if message, ok := messageRaw.(map[string]interface{}); ok {
-				headersToSchema(message)
-			}
-
-		}
-	}
-	return nil
 }
 
 func alterParameters(parameters []interface{}, key string) (map[string]interface{}, error) {
@@ -356,33 +385,34 @@ func (c *converter) alterChannels() error {
 		}
 
 		if publish, ok := channel["publish"].(map[string]interface{}); ok {
-			alterOperation(publish)
+			alterOperation(&publish)
 		}
 
 		if subscribe, ok := channel["subscribe"].(map[string]interface{}); ok {
-			alterOperation(subscribe)
+			alterOperation(&subscribe)
 		}
 	}
 	return nil
 }
 
-func headersToSchema(arg map[string]interface{}) {
-	if arg["headers"] != nil {
-		arg["headers"] = map[string]interface{}{
+func headersToSchema(arg *map[string]interface{}) {
+	headers := (*arg)["headers"]
+	if headers != nil {
+		(*arg)["headers"] = map[string]interface{}{
 			"type":       "object",
-			"properties": arg["headers"],
+			"properties": headers,
 		}
 	}
 }
 
-func alterOperation(operation map[string]interface{}) {
-	if message, ok := operation["message"].(map[string]interface{}); ok {
+func alterOperation(operation *map[string]interface{}) {
+	if message, ok := (*operation)["message"].(map[string]interface{}); ok {
 		if oneOf, ok := message["oneOf"].([]map[string]interface{}); ok {
 			for _, elem := range oneOf {
-				headersToSchema(elem)
+				headersToSchema(&elem)
 			}
 		} else {
-			headersToSchema(message)
+			headersToSchema(&message)
 		}
 	}
 }
