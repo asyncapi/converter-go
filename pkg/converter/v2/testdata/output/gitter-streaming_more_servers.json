@@ -167,7 +167,6 @@
       }
     }
   },
-  "id": "test",
   "info": {
     "title": "Gitter Streaming API",
     "version": "1.0.0"
@@ -192,6 +191,44 @@
         },
         "roomId": {
           "description": "Id of the Gitter room."
+        }
+      }
+    },
+    "server1": {
+      "protocol": "mqtts",
+      "protocolVersion": "1.2",
+      "security": [
+        {
+          "httpBearerToken": []
+        }
+      ],
+      "url": "https://stream.gitter.im/some-url",
+      "variables": {
+        "resource": {
+          "description": "The resource to consume. Random text.",
+          "enum": [
+            "enum1",
+            "1mune"
+          ]
+        }
+      }
+    },
+    "server2": {
+      "protocol": "kafka",
+      "protocolVersion": "1.2.3",
+      "security": [
+        {
+          "httpBearerToken": []
+        }
+      ],
+      "url": "https://stream.gitter.im/some-url2",
+      "variables": {
+        "resource": {
+          "description": "Third server. Test.",
+          "enum": [
+            "enum2",
+            "2mune"
+          ]
         }
       }
     }

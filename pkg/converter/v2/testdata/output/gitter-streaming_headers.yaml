@@ -5,12 +5,12 @@
       "subscribe": {
         "message": {
           "oneOf": [
-            {
-              "$ref": "#/components/messages/chatMessage"
-            },
-            {
-              "$ref": "#/components/messages/heartbeat"
-            }
+          {
+            "$ref": "#/components/messages/chatMessage"
+          },
+          {
+            "$ref": "#/components/messages/heartbeat"
+          }
           ]
         }
       }
@@ -19,6 +19,22 @@
   "components": {
     "messages": {
       "chatMessage": {
+        "headers": {
+          "properties": {
+            "MQMD": {
+              "properties": {
+                "CorrelId": {
+                  "format": "binary",
+                  "maxLength": 24,
+                  "minLength": 24,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
         "payload": {
           "properties": {
             "fromUser": {
@@ -167,7 +183,6 @@
       }
     }
   },
-  "id": "test",
   "info": {
     "title": "Gitter Streaming API",
     "version": "1.0.0"
@@ -177,9 +192,9 @@
       "protocol": "https",
       "protocolVersion": "1.1",
       "security": [
-        {
-          "httpBearerToken": []
-        }
+      {
+        "httpBearerToken": []
+      }
       ],
       "url": "https://stream.gitter.im/v1/rooms/{roomId}/{resource}",
       "variables": {

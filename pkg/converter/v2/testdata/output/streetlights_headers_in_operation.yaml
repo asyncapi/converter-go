@@ -1,33 +1,23 @@
 asyncapi: 2.0.0
 channels:
-    smartylighting/streetlights/1/0/action/{streetlightId}/dim:
-        parameters:
-            streetlightId:
-                $ref: '#/components/parameters/streetlightId'
-        subscribe:
-            message:
-                $ref: '#/components/messages/dimLight'
-    smartylighting/streetlights/1/0/action/{streetlightId}/turn/off:
-        parameters:
-            streetlightId:
-                $ref: '#/components/parameters/streetlightId'
-        subscribe:
-            message:
-                $ref: '#/components/messages/turnOnOff'
-    smartylighting/streetlights/1/0/action/{streetlightId}/turn/on:
-        parameters:
-            streetlightId:
-                $ref: '#/components/parameters/streetlightId'
-        subscribe:
-            message:
-                $ref: '#/components/messages/turnOnOff'
     smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured:
-        parameters:
-            streetlightId:
-                $ref: '#/components/parameters/streetlightId'
         publish:
             message:
-                $ref: '#/components/messages/lightMeasured'
+                headers:
+                    properties:
+                        MQMD:
+                            properties:
+                                CorrelId:
+                                    format: binary
+                                    maxLength: 24
+                                    minLength: 24
+                                    type: string
+                            type: object
+                    type: object
+                payload:
+                    $ref: '#/components/schemas/lightMeasuredPayload'
+                summary: Inform about environmental lighting conditions for a particular
+                    streetlight.
 components:
     messages:
         dimLight:
