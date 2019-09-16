@@ -116,7 +116,6 @@ func (c *converter) updateVersion() error {
 
 func (c *converter) updateServers() error {
 	servers, ok := c.data["servers"].([]interface{})
-
 	if !ok {
 		return nil
 	}
@@ -139,7 +138,6 @@ func (c *converter) updateServers() error {
 	}
 
 	var mappedServers = make(map[string]interface{})
-
 	for index, item := range servers {
 		//done same way as in https://github.com/asyncapi/converter/blob/020946e745342a6751565406e156c499859f5763/lib/index.js#L106
 		if index == 0 {
@@ -150,7 +148,6 @@ func (c *converter) updateServers() error {
 	}
 
 	c.data["servers"] = mappedServers
-
 	return nil
 }
 
@@ -275,65 +272,58 @@ func (c *converter) updateComponents() error {
 	removeNameFromParams(&components)
 
 	messages, ok := components["messages"].(map[string]interface{})
+	if !ok {
+		return nil
+	}
 
-	if ok {
-		for _, messageRaw := range messages {
-			if message, ok := messageRaw.(map[string]interface{}); ok {
-				headersToSchema(&message)
-			}
-
+	for _, messageRaw := range messages {
+		if message, ok := messageRaw.(map[string]interface{}); ok {
+			headersToSchema(&message)
 		}
+
 	}
 	return nil
 }
 
 func removeNameFromParams(arg *map[string]interface{}) {
 	parameters, ok := (*arg)["parameters"].(map[string]interface{})
-
-	if ok {
-		for _, rawParam := range parameters {
-			if param, ok := rawParam.(map[string]interface{}); ok {
-				delete(param, "name")
-				rawParam = param
-			}
+	if !ok {
+		return
+	}
+	for _, rawParam := range parameters {
+		if param, ok := rawParam.(map[string]interface{}); ok {
+			delete(param, "name")
+			rawParam = param
 		}
 	}
 }
 
 func alterParameters(parameters []interface{}, key string) (map[string]interface{}, error) {
-	paramsMap := make(map[string]interface{})
 	re := regexp.MustCompile(`{([^}]+)}`)
 	var paramNames []string
-
 	for _, part := range re.FindAll([]byte(key), -1) {
 		paramNames = append(paramNames, string(part))
 	}
 
+	paramsMap := make(map[string]interface{})
 	for index, paramI := range parameters {
-
 		param, ok := paramI.(map[string]interface{})
-
 		if !ok {
 			return nil, asyncapierr.NewInvalidProperty("malformed parameter")
 		}
 
 		name := "default"
-
 		if paramName, ok := param["name"].(string); ok {
 			name = paramName
-		} else {
-			if len(paramNames) > index {
-				name = paramNames[index]
-			}
+		} else if len(paramNames) > index {
+			name = paramNames[index]
 		}
 		name = strings.TrimLeft(strings.TrimRight(name, "}"), "{")
 
 		if param["name"] != nil {
 			delete(param, "name")
 		}
-
 		paramsMap[name] = param
-
 	}
 	return paramsMap, nil
 }
@@ -351,7 +341,6 @@ func (c *converter) alterChannels() error {
 		}
 
 		if params, ok := channel["parameters"].([]interface{}); ok {
-
 			alteredParameters, err := alterParameters(params, key)
 			if err != nil {
 				return err
