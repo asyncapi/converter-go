@@ -4,14 +4,14 @@ import (
 	"github.com/asyncapi/converter-go/internal/cli"
 	"github.com/docopt/docopt-go"
 
-	"github.com/asyncapi/converter-go/pkg/converter/v2"
+	v2 "github.com/asyncapi/converter-go/pkg/converter/v2"
 
 	"fmt"
 	"log"
 	"os"
 )
 
-const version = "asyncapi-converter 0.1.0-rc1"
+const version = "asyncapi-converter 0.2"
 
 func main() {
 	usage := fmt.Sprintf(`
