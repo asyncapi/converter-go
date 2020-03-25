@@ -18,6 +18,8 @@ To install the AsyncAPI Converter package, run:
 go get github.com/asyncapi/converter-go/...
 ```
 
+> **TIP:** You can also get binaries from the [latest GitHub release](https://github.com/asyncapi/converter-go/releases/latest).
+
 ## Usage
 
 You can use the AsyncAPI Converter in the terminal or as a package.
