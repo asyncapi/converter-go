@@ -1,4 +1,4 @@
-# AsyncAPI Converter
+# Zrob mi drinka łysy
 
 [![Build Status](https://godoc.org/github.com/asyncapi/converter-go?status.svg)](https://godoc.org/github.com/asyncapi/converter-go) [![Build Status](https://travis-ci.org/asyncapi/converter-go.svg?branch=master)](https://travis-ci.org/asyncapi/converter-go) [![Go Report Card](https://goreportcard.com/badge/github.com/asyncapi/converter-go)](https://goreportcard.com/report/github.com/asyncapi/converter-go)
 
