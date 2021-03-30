@@ -269,7 +269,7 @@ func (c *converter) updateComponents() error {
 		return nil
 	}
 
-	removeNameFromParams(&components)
+	removeNameFromParams(components)
 
 	messages, ok := components["messages"].(map[string]interface{})
 	if !ok {
@@ -285,15 +285,14 @@ func (c *converter) updateComponents() error {
 	return nil
 }
 
-func removeNameFromParams(arg *map[string]interface{}) {
-	parameters, ok := (*arg)["parameters"].(map[string]interface{})
+func removeNameFromParams(arg map[string]interface{}) {
+	parameters, ok := arg["parameters"].(map[string]interface{})
 	if !ok {
 		return
 	}
 	for _, rawParam := range parameters {
 		if param, ok := rawParam.(map[string]interface{}); ok {
 			delete(param, "name")
-			rawParam = param
 		}
 	}
 }
