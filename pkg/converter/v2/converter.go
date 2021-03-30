@@ -12,7 +12,7 @@ import (
 // AsyncapiVersion is the AsyncAPI version that the document will be converted to.
 const AsyncapiVersion = "2.0.0"
 
-var versionRegexp = regexp.MustCompile("^1\\.[0-2]\\.0$")
+var versionRegexp = regexp.MustCompile(`^1\.[0-2]\.0$`)
 
 // Decode reads an AsyncAPI document from input and stores it in the value.
 type Decode = func(interface{}, io.Reader) error
@@ -269,7 +269,7 @@ func (c *converter) updateComponents() error {
 		return nil
 	}
 
-	removeNameFromParams(&components)
+	removeNameFromParams(components)
 
 	messages, ok := components["messages"].(map[string]interface{})
 	if !ok {
@@ -285,15 +285,14 @@ func (c *converter) updateComponents() error {
 	return nil
 }
 
-func removeNameFromParams(arg *map[string]interface{}) {
-	parameters, ok := (*arg)["parameters"].(map[string]interface{})
+func removeNameFromParams(arg map[string]interface{}) {
+	parameters, ok := arg["parameters"].(map[string]interface{})
 	if !ok {
 		return
 	}
 	for _, rawParam := range parameters {
 		if param, ok := rawParam.(map[string]interface{}); ok {
 			delete(param, "name")
-			rawParam = param
 		}
 	}
 }

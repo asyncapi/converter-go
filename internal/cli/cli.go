@@ -33,7 +33,6 @@ var _ v2.Converter = Converter(nil)
 // the converted document with arguments passed from the terminal.
 type Cli struct {
 	docopt.Opts
-	data interface{}
 }
 
 // New returns a new Cli instance.
