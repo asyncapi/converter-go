@@ -21,9 +21,9 @@ var (
 )
 
 const (
-	encodeOptionYAML  = "--toYAML"
-	fileOptionPath = "<PATH>"
-	idOption = "--id"
+	optionEncodeYAML = "--toYAML"
+	optionFilePath = "<PATH>"
+	optionID       = "--id"
 )
 
 type encode = func(interface{}, io.Writer) error
@@ -49,7 +49,7 @@ func New(opts docopt.Opts) Cli {
 }
 
 func (h Cli) id() *string {
-	idOption, ok := h.Opts[idOption]
+	idOption, ok := h.Opts[optionID]
 	if !ok || idOption == nil {
 		return nil
 	}
@@ -58,12 +58,12 @@ func (h Cli) id() *string {
 }
 
 func (h Cli) encode() (encode, error) {
-	if _, ok := h.Opts[encodeOptionYAML]; !ok {
+	if _, ok := h.Opts[optionEncodeYAML]; !ok {
 		return asyncapiEncode.ToJSON, nil
 	}
-	toYaml, ok := h.Opts[encodeOptionYAML].(bool)
+	toYaml, ok := h.Opts[optionEncodeYAML].(bool)
 	if !ok {
-		return nil, errors.Wrap(errInvalidArgument, encodeOptionYAML)
+		return nil, errors.Wrap(errInvalidArgument, optionEncodeYAML)
 	}
 	if toYaml {
 		return asyncapiEncode.ToYaml, nil
@@ -77,7 +77,7 @@ func isURL(str string) bool {
 }
 
 func (h Cli) reader() (io.Reader, error) {
-	fileOption := h.Opts[fileOptionPath]
+	fileOption := h.Opts[optionFilePath]
 	path := fmt.Sprintf("%v", fileOption)
 	if isURL(path) {
 		resp, err := http.Get(path)
