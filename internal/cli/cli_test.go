@@ -9,7 +9,7 @@ import (
 func TestCli_id_error(t *testing.T) {
 	g := NewWithT(t)
 	id := New(map[string]interface{}{
-		"--id": 123,
+		idOption: 123,
 	}).id()
 	g.Expect(*id).To(Equal("123"))
 }
@@ -23,7 +23,7 @@ func TestCli_id_ok(t *testing.T) {
 func TestCli_encode_err(t *testing.T) {
 	g := NewWithT(t)
 	_, err := New(map[string]interface{}{
-		"--toYAML": "error",
+		encodeOptionYAML: "error",
 	}).encode()
 	g.Expect(err).Should(HaveOccurred())
 }
@@ -37,7 +37,7 @@ func TestCli_encode_ToJSON(t *testing.T) {
 func TestCli_encode_ToYaml_true(t *testing.T) {
 	g := NewWithT(t)
 	_, err := New(map[string]interface{}{
-		"--toYAML": true,
+		encodeOptionYAML: true,
 	}).encode()
 	g.Expect(err).ShouldNot(HaveOccurred())
 }
@@ -45,7 +45,7 @@ func TestCli_encode_ToYaml_true(t *testing.T) {
 func TestCli_encode_ToYaml_false(t *testing.T) {
 	g := NewWithT(t)
 	_, err := New(map[string]interface{}{
-		"--toYAML": false,
+		encodeOptionYAML: false,
 	}).encode()
 	g.Expect(err).ShouldNot(HaveOccurred())
 }
@@ -59,7 +59,7 @@ func TestCli_reader_error_no_path(t *testing.T) {
 func TestCli_reader_http_error(t *testing.T) {
 	g := NewWithT(t)
 	_, err := New(map[string]interface{}{
-		"<PATH>": "http://atest",
+		fileOptionPath: "http://atest",
 	}).reader()
 	g.Expect(err).Should(HaveOccurred())
 }
@@ -67,7 +67,7 @@ func TestCli_reader_http_error(t *testing.T) {
 func TestCli_reader_file_error(t *testing.T) {
 	g := NewWithT(t)
 	_, err := New(map[string]interface{}{
-		"<PATH>": "/invalid/path/to/a/file",
+		fileOptionPath: "/invalid/path/to/a/file",
 	}).reader()
 	g.Expect(err).Should(HaveOccurred())
 }

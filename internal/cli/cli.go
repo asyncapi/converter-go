@@ -20,6 +20,12 @@ var (
 	errInvalidArgument  = errors.New("invalid argument")
 )
 
+const (
+	encodeOptionYAML  = "--toYAML"
+	fileOptionPath = "<PATH>"
+	idOption = "--id"
+)
+
 type encode = func(interface{}, io.Writer) error
 
 // Converter converts an AsyncAPI document.
@@ -43,7 +49,7 @@ func New(opts docopt.Opts) Cli {
 }
 
 func (h Cli) id() *string {
-	idOption, ok := h.Opts["--id"]
+	idOption, ok := h.Opts[idOption]
 	if !ok || idOption == nil {
 		return nil
 	}
@@ -52,12 +58,12 @@ func (h Cli) id() *string {
 }
 
 func (h Cli) encode() (encode, error) {
-	if _, ok := h.Opts["--toYAML"]; !ok {
+	if _, ok := h.Opts[encodeOptionYAML]; !ok {
 		return asyncapiEncode.ToJSON, nil
 	}
-	toYaml, ok := h.Opts["--toYAML"].(bool)
+	toYaml, ok := h.Opts[encodeOptionYAML].(bool)
 	if !ok {
-		return nil, errors.Wrap(errInvalidArgument, "--toYAML")
+		return nil, errors.Wrap(errInvalidArgument, encodeOptionYAML)
 	}
 	if toYaml {
 		return asyncapiEncode.ToYaml, nil
@@ -71,7 +77,7 @@ func isURL(str string) bool {
 }
 
 func (h Cli) reader() (io.Reader, error) {
-	fileOption := h.Opts["<PATH>"]
+	fileOption := h.Opts[fileOptionPath]
 	path := fmt.Sprintf("%v", fileOption)
 	if isURL(path) {
 		resp, err := http.Get(path)
