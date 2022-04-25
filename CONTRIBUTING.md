@@ -6,7 +6,7 @@ Learn the rules to follow when you contribute code or content to this project.
 
 ## Contributing process
 
-The contributing process in this project relies on the [GitHub flow](https://guides.github.com/introduction/flow/index.html). This means that you contribute through pull requests (PRs). When adding new code or content to this project, follow these rules:
+The contributing process in this project relies on the [GitHub flow](https://docs.github.com/en/get-started/quickstart/github-flow). This means that you contribute through pull requests (PRs). When adding new code or content to this project, follow these rules:
 
 1. Fork this repository.
 1. Make your changes. Do not forgot about:
@@ -16,7 +16,7 @@ The contributing process in this project relies on the [GitHub flow](https://gui
    - Updating relevant documents if you add, remove, update props, configuration, or themes
 1. Create a PR.
 
-> **NOTE:** When you add content to the `converter-go` repository, follow the [guidelines](https://github.com/kyma-project/community/tree/master/guidelines/content-guidelines) from the `kyma-project` organization.
+> **NOTE:** When you add content to the `converter-go` repository, follow the [guidelines](https://github.com/kyma-project/community/tree/main/docs/guidelines/content-guidelines) from the `kyma-project` organization.
 
 PRs are very welcome. However, if you want to add a new feature, use GitHub issues to discuss your ideas first.
 
