@@ -75,7 +75,7 @@ To see examples of how to use the AsyncAPI Converter as a package, go to the [RE
 ## Contribution
 
 If you have a feature request, add it as an issue or propose changes in a pull request (PR).
-If you create a feature request, use the dedicated **Feature request** issue template. When you create a PR, follow the contributing rules described in the [`CONTRIBUTING.md`](CONTRIBUTING.md) document.
+If you create a feature request, use the dedicated **Feature request** issue template. When you create a PR, follow the contributing rules described in the [`CONTRIBUTING.md`](https://github.com/asyncapi/.github/blob/master/CONTRIBUTING.md) document.
 
 ## Credits
 
